@@ -1,41 +1,38 @@
 package config
 
-import  (
-	"os"
+import (
 	"fmt"
+	"os"
 	// "time"
-
 	// "github.com/go-redis/redis/v8"
 	// "github.com/golang-jwt/jwt"
 )
 
-
 type ApiConfig struct {
-		Url string
+	Url string
 }
 
 type DbConfig struct {
-		DataSourceName string
+	DataSourceName string
 }
 
 // type GrpcConfig struct {
-		// 	UrlGrpc string
+// 	UrlGrpc string
 // }
 
 // type TokenConfig struct {
-		// 	ApplicationName     string
-		// 	JwtSingingMethod    *jwt.SigningMethodHMAC
-		// 	JwtSignatureKey     string
-		// 	AccessTokenLifeTIme time.Duration
-		// 	Client              *redis.Client
+// 	ApplicationName     string
+// 	JwtSingingMethod    *jwt.SigningMethodHMAC
+// 	JwtSignatureKey     string
+// 	AccessTokenLifeTIme time.Duration
+// 	Client              *redis.Client
 // }
 
-
 type Config struct {
-		ApiConfig
-		DbConfig
-		// GrpcConfig
-		// TokenConfig
+	ApiConfig
+	DbConfig
+	// GrpcConfig
+	// TokenConfig
 }
 
 func (c *Config) readConfig() {

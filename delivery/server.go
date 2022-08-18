@@ -1,9 +1,9 @@
 package delivery
 
-import(
-		"surpreedz-backend/config"
+import (
+	"surpreedz-backend/config"
 
-		"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 type appServer struct {
@@ -23,8 +23,8 @@ func Server() *appServer {
 	//tokenService := utils.NewTokenService(appConfig.TokenConfig)
 	return &appServer{
 		//managerUscs:  managerUseCase,
-		engine:       r,
-		host:         host,
+		engine: r,
+		host:   host,
 		//tokenService: tokenService,
 	}
 }
