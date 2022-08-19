@@ -1,9 +1,9 @@
 package manager
 
 import (
-	"surpreedz-backend/config"
 	"log"
-	"os"
+	"surpreedz-backend/config"
+	"surpreedz-backend/model"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -37,14 +37,32 @@ func NewInfra(config config.Config) Infra {
 
 func initDbResource(dataSourceName string) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open(dataSourceName), &gorm.Config{})
+	if err != nil {
+		log.Println(err.Error())
+	} else {
+		log.Println("connected")
+	}
 
-	env := os.Getenv("ENV")
+	env := "migration"
 
 	if env == "dev" {
 		db = db.Debug()
 	} else if env == "migration" {
 		db = db.Debug()
-		//db.AutoMigrate(&model.Menu{}, &model.Table{}, &model.TransType{}, &model.Customer{}, &model.Discount{}, &model.MenuPrice{}, &model.Bill{}, &model.BillDetail{})
+		db.AutoMigrate(
+			&model.Account{},
+			&model.AccountDetail{},
+			&model.PhotoProfile{},
+			&model.ServiceDetail{},
+			&model.ServicePrice{},
+			&model.Order{},
+			&model.OrderRequest{},
+			&model.OrderStatus{},
+			&model.Feedback{},
+			&model.VideoResult{},
+			&model.Refund{},
+			&model.VideoProfile{},
+		)
 		if err != nil {
 			return nil, err
 		}

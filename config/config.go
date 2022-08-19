@@ -1,50 +1,50 @@
 package config
 
-import  (
-	"os"
-	"fmt"
-	// "time"
+import "fmt"
 
-	// "github.com/go-redis/redis/v8"
-	// "github.com/golang-jwt/jwt"
-)
-
+// "github.com/golang-jwt/jwt"
 
 type ApiConfig struct {
-		Url string
+	Url string
 }
 
 type DbConfig struct {
-		DataSourceName string
+	DataSourceName string
 }
 
 // type GrpcConfig struct {
-		// 	UrlGrpc string
+// 	UrlGrpc string
 // }
 
 // type TokenConfig struct {
-		// 	ApplicationName     string
-		// 	JwtSingingMethod    *jwt.SigningMethodHMAC
-		// 	JwtSignatureKey     string
-		// 	AccessTokenLifeTIme time.Duration
-		// 	Client              *redis.Client
+// 	ApplicationName     string
+// 	JwtSingingMethod    *jwt.SigningMethodHMAC
+// 	JwtSignatureKey     string
+// 	AccessTokenLifeTIme time.Duration
+// 	Client              *redis.Client
 // }
 
-
 type Config struct {
-		ApiConfig
-		DbConfig
-		// GrpcConfig
-		// TokenConfig
+	ApiConfig
+	DbConfig
+	// GrpcConfig
+	// TokenConfig
 }
 
 func (c *Config) readConfig() {
-	api := os.Getenv("API_URL")
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
+	// api := os.Getenv("API_URL")
+	// dbHost := os.Getenv("DB_HOST")
+	// dbPort := os.Getenv("DB_PORT")
+	// dbUser := os.Getenv("DB_USER")
+	// dbPassword := os.Getenv("DB_PASSWORD")
+	// dbName := os.Getenv("DB_NAME")
+
+	api := "localhost:8080"
+	dbHost := "localhost"
+	dbPort := "5432"
+	dbUser := "postgres"
+	dbPassword := "130500"
+	dbName := "surpreedz-database"
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", dbHost, dbUser, dbPassword, dbName, dbPort)
 	c.ApiConfig = ApiConfig{Url: api}
