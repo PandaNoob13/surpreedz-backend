@@ -16,7 +16,7 @@ type Order struct {
 	OrderStatus     []OrderStatus `gorm:"foreignKey:OrderId;references:ID"`
 	OrderRequest    OrderRequest  `gorm:"foreignKey:OrderId;references:ID"`
 	Feedback        Feedback      `gorm:"foreignKey:OrderId;references:ID"`
-	VideoResult     VideoResult   `gorm:"foreginKey:OrderId;references:ID"`
+	VideoResult     VideoResult   `gorm:"foreignKey:OrderId;references:ID"`
 }
 
 func (Order) TableName() string {
