@@ -1,9 +1,10 @@
 package manager
 
 import (
-	"surpreedz-backend/config"
 	"log"
 	"os"
+	"surpreedz-backend/config"
+	"surpreedz-backend/model"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -44,7 +45,12 @@ func initDbResource(dataSourceName string) (*gorm.DB, error) {
 		db = db.Debug()
 	} else if env == "migration" {
 		db = db.Debug()
-		//db.AutoMigrate(&model.Menu{}, &model.Table{}, &model.TransType{}, &model.Customer{}, &model.Discount{}, &model.MenuPrice{}, &model.Bill{}, &model.BillDetail{})
+		db.AutoMigrate(&model.Account{}, &model.AccountDetail{},&model.PhotoProfile{}, &model.ServiceDetail{}, &model.ServicePrice{}, &model.VideoProfile{}, &model.Order{}, &model.VideoResult{}, &model.Feedback{}, &model.OrderRequest{}, &model.OrderStatus{}, &model.Refund{})
+		//db.AutoMigrate(&model.Account{}, &model.AccountDetail{},&model.PhotoProfile{})
+		//db.AutoMigrate(&model.ServiceDetail{})
+		//db.AutoMigrate(&model.Order{})
+		//db.AutoMigrate(&model.ServicePrice{}, &model.VideoProfile{})
+		//db.AutoMigrate(&model.VideoResult{}, &model.Feedback{}, &model.OrderRequest{}, &model.OrderStatus{}, &model.Refund{})
 		if err != nil {
 			return nil, err
 		}

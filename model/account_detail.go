@@ -1,14 +1,13 @@
 package model
 
-import "gorm.io/gorm"
-
 type AccountDetail struct {
-	gorm.Model
+	BaseModel     BaseModel      `gorm:"embedded" json:"baseModel"`
 	ID            int            `json:"account_detail_id" gorm:"primaryKey;not null"`
-	AccountId     int            `json:"account_id"`
-	UserName      string         `json:"username" gorm:"size:20;not null"`
+	AccountId     int            `json:"account_id" gorm:";not null"`
+	Account       Account        `gorm:"foreignKey:AccountId" json:"account"`
+	Name          string         `json:"name" gorm:"size:20;not null"`
 	Location      string         `json:"location" gorm:"size:15;not null"`
-	PhotoProfiles []PhotoProfile `gorm:"foreignKey:AccountDetailId;references:ID"`
+	//PhotoProfiles []PhotoProfile `gorm:"foreignKey:AccountDetailId;references:ID"`
 }
 
 func (AccountDetail) TableName() string {

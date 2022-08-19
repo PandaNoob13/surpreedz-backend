@@ -1,18 +1,15 @@
 package model
 
-import (
-	"time"
-
-	"gorm.io/gorm"
-)
+import "time"
 
 type OrderStatus struct {
-	gorm.Model
-	ID      int       `json:"order_status_id" gorm:"primaryKey;not null"`
-	OrderId int       `json:"order_id" gorm:"-;not null"`
-	Status  string    `json:"order_status" gorm:"size:15;not null"`
-	Date    time.Time `json:"date" gorm:"-;not null"`
-	Refund  Refund    `gorm:"foreignKey:OrderStatusId;references:ID"`
+	BaseModel BaseModel `gorm:"embedded" json:"baseModel"`
+	ID        int       `json:"order_status_id" gorm:"primaryKey;not null"`
+	OrderId   int       `json:"order_id" gorm:";not null"`
+	Order     Order     `gorm:"foreignKey:OrderId" json:"order"`
+	Status    string    `json:"order_status" gorm:"size:15;not null"`
+	TimeStamp time.Time `json:"time_stamp" gorm:"-;not null"`
+	//Refund    Refund    `gorm:"foreignKey:OrderStatusId;references:ID"`
 }
 
 func (OrderStatus) TableName() string {
