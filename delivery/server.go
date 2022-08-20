@@ -8,7 +8,8 @@ import (
 )
 
 type appServer struct {
-	infra manager.Infra
+	managerRepo manager.RepositoryManager
+	infra       manager.Infra
 	// managerUscs manager.Usecase
 	engine *gin.Engine
 	// tokenService utils.Token
@@ -19,12 +20,13 @@ func Server() *appServer {
 	r := gin.Default()
 	appConfig := config.NewConfig()
 	infra := manager.NewInfra(appConfig)
-	//managerRepo := manager.NewRepositoryManager(infra)
+	managerRepo := manager.NewRepositoryManager(infra)
 	//managerUseCase := manager.NewUseCaseManager(managerRepo)
 	host := appConfig.Url
 	//tokenService := utils.NewTokenService(appConfig.TokenConfig)
 	return &appServer{
-		infra: infra,
+		managerRepo: managerRepo,
+		infra:       infra,
 		//managerUscs:  managerUseCase,
 		engine: r,
 		host:   host,
