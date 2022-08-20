@@ -9,7 +9,6 @@ import (
 
 type AccountRepository interface {
 	Insert(customer *model.Account) error
-	FindAllBy(preload string, condition string, searchValue ...interface{}) ([]model.Account, error)
 	FindById(id int) (model.Account, error)
 	RetrieveAll(page int, itemPerPage int) ([]model.Account, error)
 	Update(customer *model.Account, by map[string]interface{}) error
@@ -39,7 +38,7 @@ func (a *accountRepository) Update(customer *model.Account, by map[string]interf
 func (a *accountRepository) RetrieveAll(page int, itemPerPage int) ([]model.Account, error) {
 	var customers []model.Account
 	offset := itemPerPage * (page - 1)
-	res := a.db.Unscoped().Order("created_at").Limit(itemPerPage).Offset(offset).Find(&customers)
+	res := a.db.Unscoped().Order("created_at").Limit(itemPerPage).Offset(offset).Preload("Orders.VideoResult").Preload("Orders.Feedback").Preload("Orders.OrderRequest").Preload("Orders.OrderStatus.Refund").Preload("ServiceDetail.VideoProfiles").Preload("ServiceDetail.ServicePrices").Preload("AccountDetail.PhotoProfiles").Find(&customers)
 	if err := res.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -52,7 +51,7 @@ func (a *accountRepository) RetrieveAll(page int, itemPerPage int) ([]model.Acco
 
 func (a *accountRepository) FindById(id int) (model.Account, error) {
 	var customer model.Account
-	result := a.db.First(&customer, id)
+	result := a.db.Preload("Orders.VideoResult").Preload("Orders.Feedback").Preload("Orders.OrderRequest").Preload("Orders.OrderStatus.Refund").Preload("ServiceDetail.VideoProfiles").Preload("ServiceDetail.ServicePrice").Preload("AccountDetail.PhotoProfiles").Where("mst_account.id = ?", id).First(&customer)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return customer, nil
@@ -61,30 +60,6 @@ func (a *accountRepository) FindById(id int) (model.Account, error) {
 		}
 	}
 	return customer, nil
-}
-
-func (a *accountRepository) FindAllBy(preload string, condition string, searchValue ...interface{}) ([]model.Account, error) {
-	var customers []model.Account
-	if preload == "" {
-		result := a.db.Where(condition, searchValue...).Find(&customers)
-		if err := result.Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, nil
-			} else {
-				return nil, err
-			}
-		}
-	} else {
-		result := a.db.Preload(preload).Where(condition, searchValue...).Find(&customers)
-		if err := result.Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, nil
-			} else {
-				return nil, err
-			}
-		}
-	}
-	return customers, nil
 }
 
 func (a *accountRepository) Insert(customer *model.Account) error {

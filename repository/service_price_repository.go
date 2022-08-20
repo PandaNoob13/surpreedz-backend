@@ -9,7 +9,6 @@ import (
 
 type ServicePriceRepository interface {
 	Insert(servicePrice *model.ServicePrice) error
-	FindAllBy(preload string, condition string, searchValue ...interface{}) ([]model.ServicePrice, error)
 	FindById(id int) (model.ServicePrice, error)
 	RetrieveAll(page int, itemPerPage int) ([]model.ServicePrice, error)
 	Update(servicePrice *model.ServicePrice, by map[string]interface{}) error
@@ -61,30 +60,6 @@ func (sp *servicePriceRepository) FindById(id int) (model.ServicePrice, error) {
 		}
 	}
 	return servicePrice, nil
-}
-
-func (sp *servicePriceRepository) FindAllBy(preload string, condition string, searcValue ...interface{}) ([]model.ServicePrice, error) {
-	var servicePrices []model.ServicePrice
-	if preload == "" {
-		result := sp.db.Where(condition, searcValue...).Find(&servicePrices)
-		if err := result.Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, nil
-			} else {
-				return nil, err
-			}
-		}
-	} else {
-		result := sp.db.Preload(preload).Where(condition, searcValue...).Find(&servicePrices)
-		if err := result.Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, nil
-			} else {
-				return nil, err
-			}
-		}
-	}
-	return servicePrices, nil
 }
 
 func (sp *servicePriceRepository) Insert(servicePrice *model.ServicePrice) error {

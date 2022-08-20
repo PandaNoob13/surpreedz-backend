@@ -9,7 +9,6 @@ import (
 
 type PhotoProfileRepository interface {
 	Insert(customersPhoto *model.PhotoProfile) error
-	FindAllBy(preload string, condition string, searchValue ...interface{}) ([]model.PhotoProfile, error)
 	FindById(id int) (model.PhotoProfile, error)
 	RetrieveAll(page int, itemPerPage int) ([]model.PhotoProfile, error)
 	Update(customersPhoto *model.PhotoProfile, by map[string]interface{}) error

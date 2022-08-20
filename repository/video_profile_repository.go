@@ -9,7 +9,6 @@ import (
 
 type VideoProfileRepository interface {
 	Insert(serviceVideo *model.VideoProfile) error
-	FindAllBy(preload string, condition string, searchValue ...interface{}) ([]model.VideoProfile, error)
 	FindById(id int) (model.VideoProfile, error)
 	RetrieveAll(page int, itemPerPage int) ([]model.VideoProfile, error)
 	Update(serviceVideo *model.VideoProfile, by map[string]interface{}) error
@@ -61,30 +60,6 @@ func (v *videoProfileRepository) FindById(id int) (model.VideoProfile, error) {
 		}
 	}
 	return serviceVideo, nil
-}
-
-func (v *videoProfileRepository) FindAllBy(preload string, condition string, searchValue ...interface{}) ([]model.VideoProfile, error) {
-	var serviceVideos []model.VideoProfile
-	if preload == "" {
-		result := v.db.Where(condition, searchValue...).Find(&serviceVideos)
-		if err := result.Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, nil
-			} else {
-				return nil, err
-			}
-		}
-	} else {
-		result := v.db.Preload(preload).Where(condition, searchValue...).Find(&serviceVideos)
-		if err := result.Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, nil
-			} else {
-				return nil, err
-			}
-		}
-	}
-	return serviceVideos, nil
 }
 
 func (v *videoProfileRepository) Insert(serviceVideo *model.VideoProfile) error {

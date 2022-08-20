@@ -9,7 +9,6 @@ import (
 
 type ServiceDetailRepository interface {
 	Insert(customersService *model.ServiceDetail) error
-	FindAllBy(preload string, condition string, serachValue ...interface{}) ([]model.ServiceDetail, error)
 	FindById(id int) (model.ServiceDetail, error)
 	RetrieveAll(page int, itemPerPage int) ([]model.ServiceDetail, error)
 	Update(customersService *model.ServiceDetail, by map[string]interface{}) error
@@ -39,7 +38,7 @@ func (s *serviceDetailRepository) Update(customersService *model.ServiceDetail, 
 func (s *serviceDetailRepository) RetrieveAll(page int, itemPerPage int) ([]model.ServiceDetail, error) {
 	var customersServices []model.ServiceDetail
 	offset := itemPerPage * (page - 1)
-	res := s.db.Unscoped().Order("created_at").Limit(itemPerPage).Offset(offset).Find(&customersServices)
+	res := s.db.Unscoped().Order("created_at").Limit(itemPerPage).Offset(offset).Preload("Orders.VideoResult").Preload("Orders.Feedback").Preload("Orders.OrderRequest").Preload("Orders.OrderStatus.Refund").Preload("ServicePrices").Preload("VideoProfiles").Find(&customersServices)
 	if err := res.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -52,7 +51,7 @@ func (s *serviceDetailRepository) RetrieveAll(page int, itemPerPage int) ([]mode
 
 func (s *serviceDetailRepository) FindById(id int) (model.ServiceDetail, error) {
 	var customersService model.ServiceDetail
-	result := s.db.First(&customersService, id)
+	result := s.db.Preload("Orders.VideoResult").Preload("Orders.Feedback").Preload("Orders.OrderRequest").Preload("Orders.OrderStatus.Refund").Preload("ServicePrices").Preload("VideoProfiles").Where("mst_service_detail.id = ?", id).First(&customersService)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return customersService, nil
@@ -61,30 +60,6 @@ func (s *serviceDetailRepository) FindById(id int) (model.ServiceDetail, error) 
 		}
 	}
 	return customersService, nil
-}
-
-func (s *serviceDetailRepository) FindAllBy(preload string, condition string, searchValue ...interface{}) ([]model.ServiceDetail, error) {
-	var customersServices []model.ServiceDetail
-	if preload == "" {
-		result := s.db.Where(condition, searchValue...).Find(&customersServices)
-		if err := result.Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, nil
-			} else {
-				return nil, err
-			}
-		}
-	} else {
-		result := s.db.Preload(preload).Where(condition, searchValue...).Find(&customersServices)
-		if err := result.Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, nil
-			} else {
-				return nil, err
-			}
-		}
-	}
-	return customersServices, nil
 }
 
 func (s *serviceDetailRepository) Insert(customersService *model.ServiceDetail) error {
