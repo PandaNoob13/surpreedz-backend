@@ -43,7 +43,7 @@ func initDbResource(dataSourceName string) (*gorm.DB, error) {
 		log.Println("connected")
 	}
 
-	env := "migration"
+	env := "dev"
 
 	if env == "dev" {
 		db = db.Debug()
