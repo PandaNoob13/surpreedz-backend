@@ -13,9 +13,9 @@ type Config1 struct {
 }
 
 func (c *Config1) initDB() {
-	dbHost := ""
-	dbPort := ""
-	dbUser := ""
+	dbHost := "localhost"
+	dbPort := "5432"
+	dbUser := "postgres"
 	dbPassword := ""
 	dbName := ""
 	env := "dev"
