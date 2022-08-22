@@ -48,7 +48,6 @@ func (l *LoginController) loginAkunCustomer(ctx *gin.Context) {
 
 		ctx.JSON(http.StatusOK, gin.H{
 			"token": token,
-			"akun":  AccRes,
 		})
 	} else {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
