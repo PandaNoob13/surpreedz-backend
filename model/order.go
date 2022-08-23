@@ -5,7 +5,6 @@ import (
 )
 
 type Order struct {
-	gorm.Model
 	ID              int           `json:"order_id" gorm:"primaryKey;not null"`
 	BuyerId         int           `json:"buyer_id" gorm:";not null"`
 	ServiceDetailId int           `json:"service_detail_id" gorm:";not null"`
@@ -14,6 +13,7 @@ type Order struct {
 	OrderRequest    OrderRequest  `gorm:"foreignKey:OrderId;references:ID"`
 	Feedback        Feedback      `gorm:"foreignKey:OrderId;references:ID"`
 	VideoResult     VideoResult   `gorm:"foreignKey:OrderId;references:ID"`
+	gorm.Model
 }
 
 func (Order) TableName() string {

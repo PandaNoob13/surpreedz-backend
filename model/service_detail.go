@@ -11,6 +11,7 @@ type ServiceDetail struct {
 	ServicePrices []ServicePrice `gorm:"foreignKey:ServiceDetailId;references:ID"`
 	VideoProfiles []VideoProfile `gorm:"foreignKey:ServiceDetailId;references:ID"`
 	Orders        []Order        `gorm:"foreignKey:ServiceDetailId;references:ID"`
+	gorm.Model
 }
 
 func (ServiceDetail) TableName() string {
