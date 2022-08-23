@@ -24,7 +24,16 @@ func (s *SignUpController) buatAkunBaru(ctx *gin.Context) {
 		return
 	}
 
-	err := s.ucSignUpAccount.SignUpNewAccount(&input)
+	_, err := s.ucFindAccountByEmail.FindAccountByEmail(input.Email)
+	if err == nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"status":  "FAILED",
+			"message": "Account exist with this email",
+		})
+		return
+	}
+
+	err = s.ucSignUpAccount.SignUpNewAccount(&input)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"status":  "FAILED",

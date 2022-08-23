@@ -43,9 +43,9 @@ func (e *EditAccountController) editAkunInfo(ctx *gin.Context) {
 func NewEditAccountController(router *gin.Engine, tokenService utils.Token, ucEditAcc usecase.EditAccountUsecase) *EditAccountController {
 
 	controller := EditAccountController{
-		router:    router,
+		router:       router,
 		tokenService: tokenService,
-		ucEditAcc: ucEditAcc,
+		ucEditAcc:    ucEditAcc,
 	}
 
 	rEditAcc := router.Group("/account", middleware.NewTokenValidator(tokenService).RequireToken())

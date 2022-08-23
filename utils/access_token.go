@@ -58,7 +58,7 @@ func (t *token) CreateAccessToken(cred *model.Credential) (*model.TokenDetails, 
 		StandardClaims: jwt.StandardClaims{
 			Issuer: t.cfg.ApplicationName,
 		},
-		Username:   cred.Username,
+		Username: cred.Username,
 		//Email:      cred.Email,
 		AccessUUID: td.AccessUuid,
 	}
@@ -90,8 +90,10 @@ func (t *token) VerifyAccessToken(tokenString string) (*model.AccessDetail, erro
 		log.Fatalln("Token invalid...")
 		return nil, err
 	}
+
+	fmt.Println("claims : ", claims)
 	accessUuid := claims["AccessUUID"].(string)
-	userName := claims["Username"].(string)
+	userName := claims["Email"].(string)
 	return &model.AccessDetail{
 		AccessUuid: accessUuid,
 		Username:   userName,
