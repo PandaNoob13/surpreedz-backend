@@ -1,8 +1,12 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+	"time"
 
-// "github.com/golang-jwt/jwt"
+	"github.com/go-redis/redis/v8"
+	"github.com/golang-jwt/jwt"
+)
 
 type ApiConfig struct {
 	Url string
@@ -16,19 +20,19 @@ type DbConfig struct {
 // 	UrlGrpc string
 // }
 
-// type TokenConfig struct {
-// 	ApplicationName     string
-// 	JwtSingingMethod    *jwt.SigningMethodHMAC
-// 	JwtSignatureKey     string
-// 	AccessTokenLifeTIme time.Duration
-// 	Client              *redis.Client
-// }
+type TokenConfig struct {
+	ApplicationName     string
+	JwtSingingMethod    *jwt.SigningMethodHMAC
+	JwtSignatureKey     string
+	AccessTokenLifeTIme time.Duration
+	Client              *redis.Client
+}
 
 type Config struct {
 	ApiConfig
 	DbConfig
 	// GrpcConfig
-	// TokenConfig
+	TokenConfig
 }
 
 func (c *Config) readConfig() {
@@ -39,27 +43,28 @@ func (c *Config) readConfig() {
 	// dbPassword := os.Getenv("DB_PASSWORD")
 	// dbName := os.Getenv("DB_NAME")
 
-	api := ""
-	dbHost := ""
-	dbPort := ""
-	dbUser := ""
-	dbPassword := ""
-	dbName := ""
+	api := "localhost:8080"
+	dbHost := "localhost"
+	dbPort := "5432"
+	dbUser := "postgres"
+	dbPassword := "ah0k1234!$$!"
+	dbName := "coba_projek_smm"
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", dbHost, dbUser, dbPassword, dbName, dbPort)
 	c.ApiConfig = ApiConfig{Url: api}
 	c.DbConfig = DbConfig{DataSourceName: dsn}
 	// c.GrpcConfig = GrpcConfig{UrlGrpc: grpcUrl}
-	// c.TokenConfig = TokenConfig{
-	// 	ApplicationName:     "ENIGMA",
-	// 	JwtSingingMethod:    jwt.SigningMethodHS256,
-	// 	JwtSignatureKey:     "3N!GM4",
-	// 	AccessTokenLifeTIme: 60 * time.Second,
-	// 	Client: redis.NewClient(&redis.Options{
-	// 		Addr:     "localhost:6379",
-	// 		Password: "",
-	// 		DB:       0,
-	// 	}),
+	c.TokenConfig = TokenConfig{
+		ApplicationName:     "ENIGMA",
+		JwtSingingMethod:    jwt.SigningMethodHS256,
+		JwtSignatureKey:     "3N!GM4",
+		AccessTokenLifeTIme: 60 * time.Second,
+		Client: redis.NewClient(&redis.Options{
+			Addr:     "localhost:6379",
+			Password: "",
+			DB:       0,
+		}),
+	}
 }
 
 func NewConfig() Config {

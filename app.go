@@ -1,18 +1,13 @@
 package main
 
-import (
-	"fmt"
-	"surpreedz-backend/config"
-	"surpreedz-backend/model"
-	"surpreedz-backend/repository"
-)
+import "surpreedz-backend/delivery"
 
 func main() {
-	//delivery.Server().Run()
+	delivery.Server().Run()
 
-	cfg := config.NewConfig1()
-	db := cfg.DbConn()
-	defer cfg.DbClose()
+	// cfg := config.NewConfig1()
+	// db := cfg.DbConn()
+	// defer cfg.DbClose()
 
 	//insert to refund
 	// refundRepo := repository.NewRefundRepository(db)
@@ -78,9 +73,9 @@ func main() {
 	// fmt.Println(order)
 
 	//find order by id
-	orderRepo := repository.NewOrderRepository(db)
-	order := model.Order{}
-	order, _ = orderRepo.FindById(1)
-	fmt.Println(order)
+	// orderRepo := repository.NewOrderRepository(db)
+	// order := model.Order{}
+	// order, _ = orderRepo.FindById(1)
+	// fmt.Println(order)
 
 }
