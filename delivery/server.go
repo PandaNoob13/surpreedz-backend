@@ -34,9 +34,11 @@ func Server() *appServer {
 }
 
 func (a *appServer) initControllers() {
-	controller.NewServiceController(a.engine, a.managerUseCase.AddService(), a.managerUseCase.FindService(), a.managerUseCase.UpdateService())
-	controller.NewOrderController(a.engine, a.managerUseCase.AddOrder())
+	controller.NewServiceController(a.engine, a.managerUseCase.AddService(), a.managerUseCase.FindService(), a.managerUseCase.UpdateService(), a.managerUseCase.RetrieveServiceHomePage())
+	controller.NewOrderController(a.engine, a.managerUseCase.AddOrder(), a.managerUseCase.RetrieveAllOrder(), a.managerUseCase.FindOrderById())
 	controller.NewOrderStatusController(a.engine, a.managerUseCase.AddOrderStatus())
+	controller.NewVideoResultController(a.engine, a.managerUseCase.AddVideoResult(), a.managerUseCase.RetrieveAllVideoResult(), a.managerUseCase.FindVideoResultById())
+	controller.NewFeedbackController(a.engine, a.managerUseCase.AddFeedback(), a.managerUseCase.RetrieveAllFeedback(), a.managerUseCase.FindFeedbackById())
 }
 
 func (a *appServer) Run() {

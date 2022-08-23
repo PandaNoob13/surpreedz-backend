@@ -10,7 +10,7 @@ import (
 type OrderRepository interface {
 	Create(order *model.Order) error
 	FindById(id int) (model.Order, error)
-	FindAll() ([]model.Order, error)
+	FindAll(page int, itemPerPage int) ([]model.Order, error)
 	UpdateByID(order *model.Order, by map[string]interface{}) error
 	Delete(order *model.Order) error
 }
@@ -37,9 +37,10 @@ func (o *orderRepository) FindById(id int) (model.Order, error) {
 	return order, nil
 }
 
-func (o *orderRepository) FindAll() ([]model.Order, error) {
+func (o *orderRepository) FindAll(page int, itemPerPage int) ([]model.Order, error) {
 	var order []model.Order
-	result := o.db.Preload("OrderStatus.Refund").Preload("OrderRequest").Preload("Feedback").Preload("VideoResult").Find(&order)
+	offset := itemPerPage * (page - 1)
+	result := o.db.Unscoped().Order("created_at").Limit(itemPerPage).Offset(offset).Preload("OrderStatus.Refund").Preload("OrderRequest").Preload("Feedback").Preload("VideoResult").Find(&order)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return order, nil

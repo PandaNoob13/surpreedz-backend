@@ -11,8 +11,10 @@ import (
 )
 
 type OrderController struct {
-	router   *gin.Engine
-	insOrdUc usecase.InsertOrderUseCase
+	router      *gin.Engine
+	insOrdUc    usecase.InsertOrderUseCase
+	rtAllOrdUc  usecase.RetrieveAllOrderUseCase
+	fdOrdByIdUc usecase.FindOrderByIdUseCase
 	api.BaseApi
 }
 
@@ -33,14 +35,42 @@ func (o *OrderController) InsertOrder(c *gin.Context) {
 	o.Success(c, addOrder)
 }
 
-func NewOrderController(router *gin.Engine, insOrdUc usecase.InsertOrderUseCase) *OrderController {
+func (o *OrderController) RetrieveAllOrder(c *gin.Context) {
+	page := c.Param("page")
+	pg, _ := strconv.Atoi(page)
+	limit := c.Param("limit")
+	lm, _ := strconv.Atoi(limit)
+	orders, err := o.rtAllOrdUc.RetrieveAllOrder(pg, lm)
+	if err != nil {
+		o.Failed(c, err)
+		return
+	}
+	o.Success(c, orders)
+}
+
+func (o *OrderController) FindOrderById(c *gin.Context) {
+	orderId := c.Param("orderId")
+	ordId, _ := strconv.Atoi(orderId)
+	order, err := o.fdOrdByIdUc.FindOrderById(ordId)
+	if err != nil {
+		o.Failed(c, err)
+		return
+	}
+	o.Success(c, order)
+}
+
+func NewOrderController(router *gin.Engine, insOrdUc usecase.InsertOrderUseCase, rtAllOrdUc usecase.RetrieveAllOrderUseCase, fdOrdByIdUc usecase.FindOrderByIdUseCase) *OrderController {
 	controller := OrderController{
-		router:   router,
-		insOrdUc: insOrdUc,
+		router:      router,
+		insOrdUc:    insOrdUc,
+		rtAllOrdUc:  rtAllOrdUc,
+		fdOrdByIdUc: fdOrdByIdUc,
 	}
 	routerOrder := router.Group("/order")
 	{
 		routerOrder.POST("/create-order/:orderId", controller.InsertOrder)
+		routerOrder.GET("get-order/:page/:limit", controller.RetrieveAllOrder)
+		routerOrder.GET("get-order-by-id/:orderId", controller.FindOrderById)
 	}
 	return &controller
 }

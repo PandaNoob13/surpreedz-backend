@@ -10,7 +10,7 @@ import (
 type FeedbackRepository interface {
 	Create(feedback *model.Feedback) error
 	FindById(id int) (model.Feedback, error)
-	FindAll() ([]model.Feedback, error)
+	FindAll(page int, itemPerPage int) ([]model.Feedback, error)
 	UpdateByID(feedback *model.Feedback, by map[string]interface{}) error
 	Delete(feedback *model.Feedback) error
 }
@@ -26,7 +26,7 @@ func (f *feedbackRepository) Create(feedback *model.Feedback) error {
 
 func (f *feedbackRepository) FindById(id int) (model.Feedback, error) {
 	var feedback model.Feedback
-	result := f.db.First(&feedback, "order_id = ?", id)
+	result := f.db.Where("mst_feedback.id = ?", id).First(&feedback)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return feedback, nil
@@ -37,9 +37,10 @@ func (f *feedbackRepository) FindById(id int) (model.Feedback, error) {
 	return feedback, nil
 }
 
-func (f *feedbackRepository) FindAll() ([]model.Feedback, error) {
+func (f *feedbackRepository) FindAll(page int, itemPerPage int) ([]model.Feedback, error) {
 	var feedbacks []model.Feedback
-	result := f.db.Find(&feedbacks)
+	offset := itemPerPage * (page - 1)
+	result := f.db.Unscoped().Order("created_at").Limit(itemPerPage).Offset(offset).First(&feedbacks)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return feedbacks, nil
