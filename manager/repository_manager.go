@@ -9,6 +9,8 @@ type RepositoryManager interface {
 	ServiceDetailRepo() repository.ServiceDetailRepository
 	ServicePriceRepo() repository.ServicePriceRepository
 	VideoProfileRepo() repository.VideoProfileRepository
+	SignUpAccountRepo() repository.SignUpRepository
+	EditAccountRepo() repository.EditAccountRepository
 }
 
 type repositoryManager struct {
@@ -37,6 +39,14 @@ func (r *repositoryManager) ServicePriceRepo() repository.ServicePriceRepository
 
 func (r *repositoryManager) VideoProfileRepo() repository.VideoProfileRepository {
 	return repository.NewVideoProfileRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) SignUpAccountRepo() repository.SignUpRepository {
+	return repository.NewSignUpRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) EditAccountRepo() repository.EditAccountRepository {
+	return repository.NewEditAccountRepository(r.infra.SqlDb())
 }
 
 func NewRepositoryManager(infra Infra) RepositoryManager {

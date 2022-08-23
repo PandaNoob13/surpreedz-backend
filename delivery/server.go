@@ -38,6 +38,8 @@ func Server() *appServer {
 
 func (a *appServer) initControllers() {
 	controller.NewLoginController(a.engine, a.tokenService, a.managerUscs.FindAccountUseCase())
+	controller.NewSignUpController(a.engine, a.managerUscs.SignUpAccountUseCase(), a.managerUscs.FindAccountUseCase())
+	controller.NewEditAccountController(a.engine, a.tokenService, a.managerUscs.EditAccountInfoUsecase())
 }
 
 func (a *appServer) Run() {
