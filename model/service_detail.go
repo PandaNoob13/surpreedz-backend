@@ -1,6 +1,9 @@
 package model
 
+import "gorm.io/gorm"
+
 type ServiceDetail struct {
+	gorm.Model
 	ID            int            `json:"service_detail_id" gorm:"primaryKey;not null"`
 	SellerId      int            `json:"seller_id" gorm:";not null"`
 	Role          string         `json:"role" gorm:"size:20;not null"`

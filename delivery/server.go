@@ -2,18 +2,18 @@ package delivery
 
 import (
 	"surpreedz-backend/config"
+	"surpreedz-backend/delivery/controller"
 	"surpreedz-backend/manager"
 
 	"github.com/gin-gonic/gin"
 )
 
 type appServer struct {
-	managerRepo manager.RepositoryManager
-	infra       manager.Infra
-	// managerUscs manager.Usecase
-	engine *gin.Engine
+	infra          manager.Infra
+	managerUseCase manager.UseCaseManager
+	engine         *gin.Engine
+	host           string
 	// tokenService utils.Token
-	host string
 }
 
 func Server() *appServer {
@@ -21,20 +21,22 @@ func Server() *appServer {
 	appConfig := config.NewConfig()
 	infra := manager.NewInfra(appConfig)
 	managerRepo := manager.NewRepositoryManager(infra)
-	//managerUseCase := manager.NewUseCaseManager(managerRepo)
+	managerUseCase := manager.NewUseCaseManager(managerRepo)
 	host := appConfig.Url
 	//tokenService := utils.NewTokenService(appConfig.TokenConfig)
 	return &appServer{
-		managerRepo: managerRepo,
-		infra:       infra,
-		//managerUscs:  managerUseCase,
-		engine: r,
-		host:   host,
+		infra:          infra,
+		managerUseCase: managerUseCase,
+		engine:         r,
+		host:           host,
 		//tokenService: tokenService,
 	}
 }
 
 func (a *appServer) initControllers() {
+	controller.NewServiceController(a.engine, a.managerUseCase.AddService(), a.managerUseCase.FindService(), a.managerUseCase.UpdateService())
+	controller.NewOrderController(a.engine, a.managerUseCase.AddOrder())
+	controller.NewOrderStatusController(a.engine, a.managerUseCase.AddOrderStatus())
 }
 
 func (a *appServer) Run() {
