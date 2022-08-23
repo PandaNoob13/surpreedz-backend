@@ -12,7 +12,7 @@ import (
 type appServer struct {
 	managerRepo  manager.RepositoryManager
 	infra        manager.Infra
-	managerUscs  manager.UseCaseManager
+	managerUsecase  manager.UseCaseManager
 	engine       *gin.Engine
 	tokenService utils.Token
 	host         string
@@ -29,7 +29,7 @@ func Server() *appServer {
 	return &appServer{
 		managerRepo:  managerRepo,
 		infra:        infra,
-		managerUscs:  managerUseCase,
+		managerUsecase:  managerUseCase,
 		engine:       r,
 		host:         host,
 		tokenService: tokenService,
@@ -37,9 +37,12 @@ func Server() *appServer {
 }
 
 func (a *appServer) initControllers() {
-	controller.NewLoginController(a.engine, a.tokenService, a.managerUscs.FindAccountUseCase())
-	controller.NewSignUpController(a.engine, a.managerUscs.SignUpAccountUseCase(), a.managerUscs.FindAccountUseCase())
-	controller.NewEditAccountController(a.engine, a.tokenService, a.managerUscs.EditAccountInfoUsecase())
+	controller.NewServiceController(a.engine, a.managerUseCase.AddService(), a.managerUseCase.FindService(), a.managerUseCase.UpdateService())
+	controller.NewOrderController(a.engine, a.managerUseCase.AddOrder())
+	controller.NewOrderStatusController(a.engine, a.managerUseCase.AddOrderStatus())
+	controller.NewLoginController(a.engine, a.tokenService, a.managerUseCase.FindAccountUseCase())
+	controller.NewSignUpController(a.engine, a.managerUscs.SignUpAccountUseCase(), a.managerUseCase.FindAccountUseCase())
+	controller.NewEditAccountController(a.engine, a.tokenService, a.managerUseCase.EditAccountInfoUsecase())
 }
 
 func (a *appServer) Run() {

@@ -9,6 +9,12 @@ type RepositoryManager interface {
 	ServiceDetailRepo() repository.ServiceDetailRepository
 	ServicePriceRepo() repository.ServicePriceRepository
 	VideoProfileRepo() repository.VideoProfileRepository
+	FeedbackRepo() repository.FeedbackRepository
+	OrderRepo() repository.OrderRepository
+	OrderRequestRepo() repository.OrderRequestRepository
+	OrderStatusRepo() repository.OrderStatusRepository
+	RefundRepository() repository.RefundRepository
+	VideoResultRepo() repository.VideoResultRepository
 	SignUpAccountRepo() repository.SignUpRepository
 	EditAccountRepo() repository.EditAccountRepository
 }
@@ -40,6 +46,29 @@ func (r *repositoryManager) ServicePriceRepo() repository.ServicePriceRepository
 func (r *repositoryManager) VideoProfileRepo() repository.VideoProfileRepository {
 	return repository.NewVideoProfileRepository(r.infra.SqlDb())
 }
+
+func (r *repositoryManager) FeedbackRepo() repository.FeedbackRepository {
+	return repository.NewFeedbackRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) OrderRepo() repository.OrderRepository {
+	return repository.NewOrderRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) OrderRequestRepo() repository.OrderRequestRepository {
+	return repository.NewOrderRequestRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) OrderStatusRepo() repository.OrderStatusRepository {
+	return repository.NewOrderStatusRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) RefundRepository() repository.RefundRepository {
+	return repository.NewRefundRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) VideoResultRepo() repository.VideoResultRepository {
+	return repository.NewVideoResultRepository(r.infra.SqlDb())
 
 func (r *repositoryManager) SignUpAccountRepo() repository.SignUpRepository {
 	return repository.NewSignUpRepository(r.infra.SqlDb())
