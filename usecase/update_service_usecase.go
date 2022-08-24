@@ -1,24 +1,24 @@
 package usecase
 
 import (
-	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/repository"
 )
 
 type UpdateServiceUseCase interface {
-	EditService(existService *model.ServiceDetail, by map[string]interface{}) error
+	EditService(serviceId int, existService *dto.EditServiceDto) error
 }
 
 type updateServiceUseCase struct {
-	serviceDetailRepo repository.ServiceDetailRepository
+	editServiceRepo repository.EditServiceRepository
 }
 
-func (u *updateServiceUseCase) EditService(existService *model.ServiceDetail, by map[string]interface{}) error {
-	return u.serviceDetailRepo.Update(existService, by)
+func (u *updateServiceUseCase) EditService(serviceId int, existService *dto.EditServiceDto) error {
+	return u.editServiceRepo.EditService(serviceId, existService)
 }
 
-func NewUpdateServiceUseCase(serviceDetailRepo repository.ServiceDetailRepository) UpdateServiceUseCase {
+func NewUpdateServiceUseCase(editServiceRepo repository.EditServiceRepository) UpdateServiceUseCase {
 	return &updateServiceUseCase{
-		serviceDetailRepo: serviceDetailRepo,
+		editServiceRepo: editServiceRepo,
 	}
 }
