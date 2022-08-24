@@ -3,7 +3,7 @@ package controller
 import (
 	"strconv"
 	"surpreedz-backend/delivery/api"
-	"surpreedz-backend/dto"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/usecase"
 	"surpreedz-backend/utils"
 

@@ -10,6 +10,7 @@ import (
 type ServiceDetailRepository interface {
 	Insert(customersService *model.ServiceDetail) error
 	FindById(id int) (model.ServiceDetail, error)
+	FindBySellerId(id int) (model.ServiceDetail, error)
 	RetrieveAll(page int, itemPerPage int) ([]model.ServiceDetail, error)
 	HomePageRetrieveAll(page int, itemPerPage int) ([]model.ServiceDetail, error)
 	Update(customersService *model.ServiceDetail, by map[string]interface{}) error
@@ -67,6 +68,19 @@ func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int)
 func (s *serviceDetailRepository) FindById(id int) (model.ServiceDetail, error) {
 	var customersService model.ServiceDetail
 	result := s.db.Preload("Orders.VideoResult").Preload("Orders.Feedback").Preload("Orders.OrderRequest").Preload("Orders.OrderStatus.Refund").Preload("ServicePrices").Preload("VideoProfiles").Where("mst_service_detail.id = ?", id).First(&customersService)
+	if err := result.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return customersService, nil
+		} else {
+			return customersService, err
+		}
+	}
+	return customersService, nil
+}
+
+func (s *serviceDetailRepository) FindBySellerId(id int) (model.ServiceDetail, error) {
+	var customersService model.ServiceDetail
+	result := s.db.Where("mst_service_detail.seller_id = ?", id).Last(&customersService)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return customersService, nil

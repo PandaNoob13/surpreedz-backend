@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 	"surpreedz-backend/delivery/api"
-	"surpreedz-backend/dto"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/usecase"
 	"surpreedz-backend/utils"
 
@@ -22,14 +22,12 @@ type ServiceController struct {
 
 func (s *ServiceController) InsertService(c *gin.Context) {
 	var addService dto.ServiceDto
-	serviceId := c.Param("serviceId")
-	servId, _ := strconv.Atoi(serviceId)
 	err := s.ParseRequestBody(c, &addService)
 	if err != nil {
 		s.Failed(c, utils.RequiredError())
 		return
 	}
-	err = s.insServUc.AddService(servId, addService.SellerId, addService.Role, addService.Description, addService.Price, addService.VideoLink)
+	err = s.insServUc.AddService(addService.SellerId, addService.Role, addService.Description, addService.Price, addService.VideoLink)
 	if err != nil {
 		s.Failed(c, err)
 		return
@@ -104,7 +102,7 @@ func NewServiceController(router *gin.Engine, insSerUc usecase.InsertServiceUseC
 	}
 	routerService := router.Group("/service-detail")
 	{
-		routerService.POST("/create-service-detail/:serviceId", contoller.InsertService)
+		routerService.POST("/create-service-detail", contoller.InsertService)
 		routerService.PUT("/edit-service-detail/:serviceId", contoller.UpdateService)
 		routerService.GET("/homepage/:page/:limit", contoller.RetrieveHomePage)
 		routerService.GET("/get-service-detail/:serviceId", contoller.FindServiceById)

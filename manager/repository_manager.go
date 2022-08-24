@@ -15,6 +15,8 @@ type RepositoryManager interface {
 	OrderStatusRepo() repository.OrderStatusRepository
 	RefundRepository() repository.RefundRepository
 	VideoResultRepo() repository.VideoResultRepository
+	SignUpAccountRepo() repository.SignUpRepository
+	EditAccountRepo() repository.EditAccountRepository
 }
 
 type repositoryManager struct {
@@ -67,6 +69,14 @@ func (r *repositoryManager) RefundRepository() repository.RefundRepository {
 
 func (r *repositoryManager) VideoResultRepo() repository.VideoResultRepository {
 	return repository.NewVideoResultRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) SignUpAccountRepo() repository.SignUpRepository {
+	return repository.NewSignUpRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) EditAccountRepo() repository.EditAccountRepository {
+	return repository.NewEditAccountRepository(r.infra.SqlDb())
 }
 
 func NewRepositoryManager(infra Infra) RepositoryManager {

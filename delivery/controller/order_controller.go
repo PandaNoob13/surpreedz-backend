@@ -3,7 +3,7 @@ package controller
 import (
 	"strconv"
 	"surpreedz-backend/delivery/api"
-	"surpreedz-backend/dto"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/usecase"
 	"surpreedz-backend/utils"
 
@@ -27,7 +27,7 @@ func (o *OrderController) InsertOrder(c *gin.Context) {
 		o.Failed(c, utils.RequiredError())
 		return
 	}
-	err = o.insOrdUc.AddOrder(ordId, addOrder.BuyerId, addOrder.ServiceDetailId, addOrder.DueDate, addOrder.Occassion, addOrder.RecipientName, addOrder.Message, addOrder.RecipientDescription)
+	err = o.insOrdUc.AddOrder(ordId, addOrder.BuyerId, addOrder.ServiceDetailId, addOrder.DueDate, addOrder.Occasion, addOrder.RecipientName, addOrder.Message, addOrder.RecipientDescription)
 	if err != nil {
 		o.Failed(c, err)
 		return

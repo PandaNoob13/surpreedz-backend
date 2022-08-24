@@ -1,12 +1,7 @@
 package model
 
-import (
-	"gorm.io/gorm"
-)
-
 type Order struct {
-	gorm.Model
-	ID              int           `json:"order_id" gorm:"primaryKey;not null"`
+	ID              int           `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
 	BuyerId         int           `json:"buyer_id" gorm:";not null"`
 	ServiceDetailId int           `json:"service_detail_id" gorm:";not null"`
 	DueDate         string        `json:"due_date" gorm:";not null"`
@@ -14,6 +9,7 @@ type Order struct {
 	OrderRequest    OrderRequest  `gorm:"foreignKey:OrderId;references:ID"`
 	Feedback        Feedback      `gorm:"foreignKey:OrderId;references:ID"`
 	VideoResult     VideoResult   `gorm:"foreignKey:OrderId;references:ID"`
+	Base_model
 }
 
 func (Order) TableName() string {

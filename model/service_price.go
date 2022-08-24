@@ -1,14 +1,15 @@
 package model
 
 import (
-	"gorm.io/gorm"
+	"time"
 )
 
 type ServicePrice struct {
-	gorm.Model
-	ID              int `json:"service_price_id" gorm:"primaryKey;not null"`
-	ServiceDetailId int `json:"service_detail_id" gorm:";not null"`
-	Price           int `json:"price" gorm:";not null"`
+	ID              int       `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	ServiceDetailId int       `json:"service_detail_id" gorm:";not null"`
+	Price           int       `json:"price" gorm:";not null"`
+	Date            time.Time `json:"date" gorm:";not null"`
+	Base_model
 }
 
 func (ServicePrice) TableName() string {

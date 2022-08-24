@@ -1,14 +1,14 @@
 package usecase
 
 import (
-	"surpreedz-backend/dto"
 	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/repository"
 	"surpreedz-backend/utils"
 )
 
 type InsertServiceUseCase interface {
-	AddService(serviceDetailId int, accountId int, role string, description string, price int, videoLink string) error
+	AddService(accountId int, role string, description string, price int, videoLink string) error
 }
 
 type insertServiceUseCase struct {
@@ -17,7 +17,7 @@ type insertServiceUseCase struct {
 	videoProfileRepo  repository.VideoProfileRepository
 }
 
-func (s *insertServiceUseCase) AddService(serviceDetailId int, accountId int, role string, description string, price int, videoLink string) error {
+func (s *insertServiceUseCase) AddService(accountId int, role string, description string, price int, videoLink string) error {
 	insertService := dto.ServiceDto{
 		SellerId:    accountId,
 		Role:        role,
@@ -34,15 +34,18 @@ func (s *insertServiceUseCase) AddService(serviceDetailId int, accountId int, ro
 	err1 := s.serviceDetailRepo.Insert(&toServiceDetail)
 	utils.IsError(err1)
 
+	serviceDetail, err := s.serviceDetailRepo.FindBySellerId(accountId)
+	utils.IsError(err)
+
 	toServicePrice := model.ServicePrice{
-		ServiceDetailId: serviceDetailId,
+		ServiceDetailId: serviceDetail.ID,
 		Price:           insertService.Price,
 	}
 	err2 := s.servicePriceRepo.Insert(&toServicePrice)
 	utils.IsError(err2)
 
 	toVideoProfile := model.VideoProfile{
-		ServiceDetailId:  serviceDetailId,
+		ServiceDetailId:  serviceDetail.ID,
 		VideoProfileLink: insertService.VideoLink,
 	}
 	err3 := s.videoProfileRepo.Insert(&toVideoProfile)

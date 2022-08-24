@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"surpreedz-backend/model"
 
 	"gorm.io/gorm"
@@ -10,6 +11,7 @@ import (
 type AccountRepository interface {
 	Insert(customer *model.Account) error
 	FindById(id int) (model.Account, error)
+	FindByEmail(email string) (model.Account, error)
 	RetrieveAll(page int, itemPerPage int) ([]model.Account, error)
 	Update(customer *model.Account, by map[string]interface{}) error
 	Delete(id int) error
@@ -59,6 +61,20 @@ func (a *accountRepository) FindById(id int) (model.Account, error) {
 			return customer, err
 		}
 	}
+	return customer, nil
+}
+
+func (a *accountRepository) FindByEmail(email string) (model.Account, error) {
+	var customer model.Account
+	result := a.db.Preload("ServiceDetail").Preload("AccountDetail.PhotoProfiles").Where("mst_account.email = ?", email).First(&customer)
+	if err := result.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			// 	return customer, err
+			// } else {
+			return customer, err
+		}
+	}
+	fmt.Println("Service detail : ", customer.ServiceDetail)
 	return customer, nil
 }
 

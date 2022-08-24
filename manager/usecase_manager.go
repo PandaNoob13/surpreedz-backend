@@ -3,20 +3,28 @@ package manager
 import "surpreedz-backend/usecase"
 
 type UseCaseManager interface {
-	AddService() usecase.InsertServiceUseCase
 	AddOrder() usecase.InsertOrderUseCase
 	AddOrderStatus() usecase.InsertOrderStatusUseCase
+
+	AddService() usecase.InsertServiceUseCase
 	UpdateService() usecase.UpdateServiceUseCase
 	FindService() usecase.FindServiceUseCase
 	RetrieveServiceHomePage() usecase.ShowServicesHomePageUseCase
+
 	AddVideoResult() usecase.AddVideoResultUseCase
 	RetrieveAllVideoResult() usecase.RetrieveAllVideoResultUseCase
 	FindVideoResultById() usecase.FindVideoResultByIdUseCase
+
 	RetrieveAllOrder() usecase.RetrieveAllOrderUseCase
 	FindOrderById() usecase.FindOrderByIdUseCase
+
 	AddFeedback() usecase.AddFeedbackUseCase
 	FindFeedbackById() usecase.FindFeedbackByIdUseCase
 	RetrieveAllFeedback() usecase.RetrieveAllFeedbackUseCase
+
+	FindAccountUseCase() usecase.FindAccountUseCase
+	SignUpAccountUseCase() usecase.SignUpUsecase
+	EditAccountInfoUsecase() usecase.EditAccountUsecase
 }
 
 type useCaseManager struct {
@@ -41,6 +49,18 @@ func (u *useCaseManager) UpdateService() usecase.UpdateServiceUseCase {
 
 func (u *useCaseManager) FindService() usecase.FindServiceUseCase {
 	return usecase.NewFindServiceUseCase(u.repoManager.ServiceDetailRepo())
+}
+
+func (u *useCaseManager) FindAccountUseCase() usecase.FindAccountUseCase {
+	return usecase.NewFindAccountUseCase(u.repoManager.AccountRepo())
+}
+
+func (u *useCaseManager) SignUpAccountUseCase() usecase.SignUpUsecase {
+	return usecase.NewSignUpUsecase(u.repoManager.SignUpAccountRepo())
+}
+
+func (u *useCaseManager) EditAccountInfoUsecase() usecase.EditAccountUsecase {
+	return usecase.NewEditAccountUsecase(u.repoManager.EditAccountRepo())
 }
 
 func (u *useCaseManager) RetrieveServiceHomePage() usecase.ShowServicesHomePageUseCase {
