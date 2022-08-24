@@ -53,7 +53,7 @@ func (a *accountRepository) RetrieveAll(page int, itemPerPage int) ([]model.Acco
 
 func (a *accountRepository) FindById(id int) (model.Account, error) {
 	var customer model.Account
-	result := a.db.Preload("Orders.VideoResult").Preload("Orders.Feedback").Preload("Orders.OrderRequest").Preload("Orders.OrderStatus.Refund").Preload("ServiceDetail.VideoProfiles").Preload("ServiceDetail.ServicePrice").Preload("AccountDetail.PhotoProfiles").Where("mst_account.id = ?", id).First(&customer)
+	result := a.db.Preload("Orders.VideoResult").Preload("Orders.Feedback").Preload("Orders.OrderRequest").Preload("Orders.OrderStatus.Refund").Preload("ServiceDetail.VideoProfiles").Preload("ServiceDetail.ServicePrices").Preload("AccountDetail.PhotoProfiles").Where("mst_account.id = ?", id).First(&customer)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return customer, nil
@@ -66,11 +66,12 @@ func (a *accountRepository) FindById(id int) (model.Account, error) {
 
 func (a *accountRepository) FindByEmail(email string) (model.Account, error) {
 	var customer model.Account
-	result := a.db.Preload("ServiceDetail").Preload("AccountDetail.PhotoProfiles").Where("mst_account.email = ?", email).First(&customer)
+	result := a.db.Preload("ServiceDetail.ServicePrices").Preload("ServiceDetail").Preload("AccountDetail.PhotoProfiles").Where("mst_account.email = ?", email).First(&customer)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// 	return customer, err
 			// } else {
+			fmt.Println(customer)
 			return customer, err
 		}
 	}

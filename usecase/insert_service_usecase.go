@@ -46,7 +46,7 @@ func (s *insertServiceUseCase) AddService(accountId int, role string, descriptio
 
 	toVideoProfile := model.VideoProfile{
 		ServiceDetailId:  serviceDetail.ID,
-		VideoProfileLink: insertService.VideoLink,
+		VideoProfileLink: "",
 	}
 	err3 := s.videoProfileRepo.Insert(&toVideoProfile)
 	utils.IsError(err3)

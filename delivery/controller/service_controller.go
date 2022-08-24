@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"surpreedz-backend/delivery/api"
@@ -23,15 +24,28 @@ type ServiceController struct {
 func (s *ServiceController) InsertService(c *gin.Context) {
 	var addService dto.ServiceDto
 	err := s.ParseRequestBody(c, &addService)
+	fmt.Println("Service DTO : ", addService)
 	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  "FAILED",
+			"message": err.Error(),
+		})
 		s.Failed(c, utils.RequiredError())
 		return
 	}
 	err = s.insServUc.AddService(addService.SellerId, addService.Role, addService.Description, addService.Price, addService.VideoLink)
 	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  "FAILED",
+			"message": err.Error(),
+		})
 		s.Failed(c, err)
 		return
 	}
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "SUCCESS",
+		"message": "Success inserting service",
+	})
 	s.Success(c, addService)
 }
 
