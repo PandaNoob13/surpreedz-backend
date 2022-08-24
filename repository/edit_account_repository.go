@@ -3,19 +3,20 @@ package repository
 import (
 	"errors"
 	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 
 	"gorm.io/gorm"
 )
 
 type EditAccountRepository interface {
-	EditAccount(AccountEditInfo *model.AccountEditInfo) error
+	EditAccount(AccountEditInfo *dto.AccountEditInfo) error
 }
 
 type editAccountRepository struct {
 	db *gorm.DB
 }
 
-func (e *editAccountRepository) EditAccount(accountEditInfo *model.AccountEditInfo) error {
+func (e *editAccountRepository) EditAccount(accountEditInfo *dto.AccountEditInfo) error {
 
 	tx := e.db.Begin()
 	defer func() {
@@ -59,7 +60,7 @@ func (e *editAccountRepository) EditAccount(accountEditInfo *model.AccountEditIn
 	}
 
 	if err := tx.Model(&accountDetailExist).Updates(map[string]interface{}{
-		"user_name":    accountEditInfo.Name,
+		"name":     accountEditInfo.Name,
 		"location": accountEditInfo.Location,
 	}).Error; err != nil {
 		return err

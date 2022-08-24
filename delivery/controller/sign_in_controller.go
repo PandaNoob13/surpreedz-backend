@@ -1,8 +1,9 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
-	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/usecase"
 	"surpreedz-backend/utils"
 
@@ -17,7 +18,7 @@ type LoginController struct {
 
 func (l *LoginController) loginAkunCustomer(ctx *gin.Context) {
 
-	var user model.Credential
+	var user dto.Credential
 	if err := ctx.BindJSON(&user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "can't bind struct",
@@ -25,7 +26,7 @@ func (l *LoginController) loginAkunCustomer(ctx *gin.Context) {
 		return
 	}
 
-	AccRes, err := l.ucFindAccByEmail.FindAccountByEmail(user.Username)
+	AccRes, err := l.ucFindAccByEmail.FindAccountByEmail(user.Email)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"status":  "FAILED",
@@ -34,20 +35,24 @@ func (l *LoginController) loginAkunCustomer(ctx *gin.Context) {
 		return
 	}
 
-	if user.Username == AccRes.Email && user.Password == AccRes.Password {
+	if user.Email == AccRes.Email && user.Password == AccRes.Password {
 		token, err := l.tokenService.CreateAccessToken(&user)
 		if err != nil {
+			fmt.Println(err)
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
-		err = l.tokenService.StoreAccessToken(user.Username, token)
+		err = l.tokenService.StoreAccessToken(user.Email, token)
 		if err != nil {
+			fmt.Println(err)
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{
-			"token": token,
+			"status":  "SUCCESS",
+			"token":   token,
+			"account": AccRes,
 		})
 	} else {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{

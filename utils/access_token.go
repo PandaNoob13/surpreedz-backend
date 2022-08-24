@@ -7,6 +7,7 @@ import (
 	"log"
 	"surpreedz-backend/config"
 	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -14,7 +15,7 @@ import (
 )
 
 type Token interface {
-	CreateAccessToken(cred *model.Credential) (*model.TokenDetails, error)
+	CreateAccessToken(cred *dto.Credential) (*model.TokenDetails, error)
 	VerifyAccessToken(tokenString string) (*model.AccessDetail, error)
 	StoreAccessToken(userName string, tokenDetail *model.TokenDetails) error
 	FetchAccessToken(accessDetail *model.AccessDetail) (string, error)
@@ -47,7 +48,7 @@ func (t *token) StoreAccessToken(userName string, tokenDetail *model.TokenDetail
 	return nil
 }
 
-func (t *token) CreateAccessToken(cred *model.Credential) (*model.TokenDetails, error) {
+func (t *token) CreateAccessToken(cred *dto.Credential) (*model.TokenDetails, error) {
 	td := &model.TokenDetails{}
 	now := time.Now().UTC()
 	end := now.Add(t.cfg.AccessTokenLifeTIme)
@@ -58,7 +59,7 @@ func (t *token) CreateAccessToken(cred *model.Credential) (*model.TokenDetails, 
 		StandardClaims: jwt.StandardClaims{
 			Issuer: t.cfg.ApplicationName,
 		},
-		Username: cred.Username,
+		Email: cred.Email,
 		//Email:      cred.Email,
 		AccessUUID: td.AccessUuid,
 	}
@@ -85,6 +86,9 @@ func (t *token) VerifyAccessToken(tokenString string) (*model.AccessDetail, erro
 		}
 		return []byte(t.cfg.JwtSignatureKey), nil
 	})
+	if err != nil {
+		log.Fatalln("Error parsing token")
+	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid || claims["iss"] != t.cfg.ApplicationName {
 		log.Fatalln("Token invalid...")

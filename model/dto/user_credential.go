@@ -1,7 +1,7 @@
-package model
+package dto
 
 type Credential struct {
-	Username string `json:"email"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 	//Email    string
 }

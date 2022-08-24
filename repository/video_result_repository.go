@@ -10,7 +10,7 @@ import (
 type VideoResultRepository interface {
 	Create(videoResult *model.VideoResult) error
 	FindById(id int) (model.VideoResult, error)
-	FindAll() ([]model.VideoResult, error)
+	FindAll(page int, itemPerPage int) ([]model.VideoResult, error)
 	UpdateByID(videoResult *model.VideoResult, by map[string]interface{}) error
 	Delete(videoResult *model.VideoResult) error
 }
@@ -37,9 +37,10 @@ func (v *videoResultRepository) FindById(id int) (model.VideoResult, error) {
 	return videoResult, nil
 }
 
-func (v *videoResultRepository) FindAll() ([]model.VideoResult, error) {
+func (v *videoResultRepository) FindAll(page int, itemPerPage int) ([]model.VideoResult, error) {
 	var videoResult []model.VideoResult
-	result := v.db.Find(&videoResult)
+	offset := itemPerPage * (page - 1)
+	result := v.db.Unscoped().Order("created_at").Limit(itemPerPage).Offset(offset).Find(&videoResult)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return videoResult, nil

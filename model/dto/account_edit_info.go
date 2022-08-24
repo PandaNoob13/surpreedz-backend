@@ -1,4 +1,4 @@
-package model
+package dto
 
 type AccountEditInfo struct {
 	ID        int    `json:"id"`

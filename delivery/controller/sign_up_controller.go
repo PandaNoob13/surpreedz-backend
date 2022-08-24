@@ -2,7 +2,7 @@ package controller
 
 import (
 	"net/http"
-	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/usecase"
 
 	"github.com/gin-gonic/gin"
@@ -16,9 +16,10 @@ type SignUpController struct {
 
 func (s *SignUpController) buatAkunBaru(ctx *gin.Context) {
 
-	var input model.AccountFormInfo
+	var input dto.AccountFormInfo
 	if err := ctx.BindJSON(&input); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  "FAILED",
 			"message": "can't bind struct",
 		})
 		return

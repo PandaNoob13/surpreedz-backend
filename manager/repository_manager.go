@@ -69,6 +69,7 @@ func (r *repositoryManager) RefundRepository() repository.RefundRepository {
 
 func (r *repositoryManager) VideoResultRepo() repository.VideoResultRepository {
 	return repository.NewVideoResultRepository(r.infra.SqlDb())
+}
 
 func (r *repositoryManager) SignUpAccountRepo() repository.SignUpRepository {
 	return repository.NewSignUpRepository(r.infra.SqlDb())

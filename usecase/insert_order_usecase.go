@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"surpreedz-backend/dto"
 	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/repository"
 	"surpreedz-backend/utils"
 )
@@ -21,7 +21,7 @@ func (o *insertOrderUseCase) AddOrder(orderId int, buyerId, serviceId int, dueDa
 		BuyerId:              buyerId,
 		ServiceDetailId:      serviceId,
 		DueDate:              dueDate,
-		Occassion:            occasion,
+		Occasion:             occasion,
 		RecipientName:        recipientName,
 		Message:              message,
 		RecipientDescription: description,
@@ -37,7 +37,7 @@ func (o *insertOrderUseCase) AddOrder(orderId int, buyerId, serviceId int, dueDa
 
 	toOrderRequest := model.OrderRequest{
 		OrderId:       orderId,
-		Ocassion:      insertOrder.Occassion,
+		Occasion:      insertOrder.Occasion,
 		RecipientName: insertOrder.RecipientName,
 		Message:       insertOrder.Message,
 		Description:   insertOrder.RecipientDescription,

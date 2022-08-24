@@ -1,19 +1,19 @@
 package usecase
 
 import (
-	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/repository"
 )
 
 type SignUpUsecase interface {
-	SignUpNewAccount(accountFormInfo *model.AccountFormInfo) error
+	SignUpNewAccount(accountFormInfo *dto.AccountFormInfo) error
 }
 
 type signUpUsecase struct {
 	signUpRepo repository.SignUpRepository
 }
 
-func (s *signUpUsecase) SignUpNewAccount(accountFormInfo *model.AccountFormInfo) error {
+func (s *signUpUsecase) SignUpNewAccount(accountFormInfo *dto.AccountFormInfo) error {
 	return s.signUpRepo.SignUpAccount(accountFormInfo)
 }
 

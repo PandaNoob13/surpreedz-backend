@@ -1,19 +1,19 @@
 package usecase
 
 import (
-	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/repository"
 )
 
 type EditAccountUsecase interface {
-	EditAccountInfo(accountEditInfo *model.AccountEditInfo) error
+	EditAccountInfo(accountEditInfo *dto.AccountEditInfo) error
 }
 
 type editAccountUsecase struct {
 	editAccountRepo repository.EditAccountRepository
 }
 
-func (e *editAccountUsecase) EditAccountInfo(accountEditInfo *model.AccountEditInfo) error {
+func (e *editAccountUsecase) EditAccountInfo(accountEditInfo *dto.AccountEditInfo) error {
 	return e.editAccountRepo.EditAccount(accountEditInfo)
 }
 

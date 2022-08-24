@@ -1,15 +1,13 @@
 package model
 
-import "gorm.io/gorm"
-
 type OrderRequest struct {
-	ID            int    `json:"order_request_id" gorm:"primaryKey;not null"`
+	ID            int    `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
 	OrderId       int    `json:"order_id" gorm:";not null"`
-	Ocassion      string `json:"ocassoion" gorm:"size:30;not null"`
-	RecipientName string `json:"recipient_name" gorm:"size:20;not null"`
-	Message       string `json:"message" gorm:"size:100;not null"`
-	Description   string `json:"description" gorm:"size:80;not null"`
-	gorm.Model
+	Occasion      string `json:"occasion" gorm:";not null"`
+	RecipientName string `json:"recipient_name" gorm:";not null"`
+	Message       string `json:"message" gorm:";not null"`
+	Description   string `json:"description" gorm:";not null"`
+	Base_model
 }
 
 func (OrderRequest) TableName() string {

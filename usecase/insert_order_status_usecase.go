@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"surpreedz-backend/dto"
 	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/repository"
 	"surpreedz-backend/utils"
 )

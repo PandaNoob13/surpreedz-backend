@@ -3,7 +3,7 @@ package controller
 import (
 	"net/http"
 	"surpreedz-backend/delivery/middleware"
-	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/usecase"
 	"surpreedz-backend/utils"
 
@@ -17,7 +17,7 @@ type EditAccountController struct {
 }
 
 func (e *EditAccountController) editAkunInfo(ctx *gin.Context) {
-	var input model.AccountEditInfo
+	var input dto.AccountEditInfo
 	if err := ctx.BindJSON(&input); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "can't bind struct",

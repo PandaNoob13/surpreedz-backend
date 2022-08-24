@@ -3,20 +3,21 @@ package repository
 import (
 	"errors"
 	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"time"
 
 	"gorm.io/gorm"
 )
 
 type SignUpRepository interface {
-	SignUpAccount(accountFormInfo *model.AccountFormInfo) error
+	SignUpAccount(accountFormInfo *dto.AccountFormInfo) error
 }
 
 type signUpRepository struct {
 	db *gorm.DB
 }
 
-func (s *signUpRepository) SignUpAccount(accountFormInfo *model.AccountFormInfo) error {
+func (s *signUpRepository) SignUpAccount(accountFormInfo *dto.AccountFormInfo) error {
 
 	tx := s.db.Begin()
 	defer func() {
@@ -57,7 +58,7 @@ func (s *signUpRepository) SignUpAccount(accountFormInfo *model.AccountFormInfo)
 	//create account_detail
 	newAccountDetail := &model.AccountDetail{
 		AccountId: account.ID,
-		UserName:  accountFormInfo.Name,
+		Name:      accountFormInfo.Name,
 		Location:  accountFormInfo.Location,
 	}
 

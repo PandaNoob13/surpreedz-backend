@@ -1,17 +1,14 @@
 package model
 
-import "gorm.io/gorm"
-
 type ServiceDetail struct {
-	gorm.Model
-	ID            int            `json:"service_detail_id" gorm:"primaryKey;not null"`
+	ID            int            `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
 	SellerId      int            `json:"seller_id" gorm:";not null"`
-	Role          string         `json:"role" gorm:"size:20;not null"`
-	Description   string         `json:"description" gorm:"size:30;not null"`
+	Role          string         `json:"role" gorm:";not null"`
+	Description   string         `json:"description" gorm:";not null"`
 	ServicePrices []ServicePrice `gorm:"foreignKey:ServiceDetailId;references:ID"`
 	VideoProfiles []VideoProfile `gorm:"foreignKey:ServiceDetailId;references:ID"`
 	Orders        []Order        `gorm:"foreignKey:ServiceDetailId;references:ID"`
-	gorm.Model
+	Base_model
 }
 
 func (ServiceDetail) TableName() string {

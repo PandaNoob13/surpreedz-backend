@@ -1,13 +1,11 @@
 package model
 
-import "gorm.io/gorm"
-
 type VideoProfile struct {
-	ID               int    `json:"video_profile_id" gorm:"primaryKey;not null"`
+	ID               int    `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
 	ServiceDetailId  int    `json:"service_detail_id" gorm:";not null"`
-	VideoProfileLink string `json:"video_profile_link" gorm:"size:100;not null"`
+	VideoProfileLink string `json:"video_profile_link" gorm:";not null"`
 	IsDeleted        bool   `json:"is_deleted" gorm:";not null"`
-	gorm.Model
+	Base_model
 }
 
 func (VideoProfile) TableName() string {
