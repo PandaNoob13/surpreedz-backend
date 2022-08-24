@@ -44,7 +44,7 @@ func (u *useCaseManager) AddService() usecase.InsertServiceUseCase {
 }
 
 func (u *useCaseManager) UpdateService() usecase.UpdateServiceUseCase {
-	return usecase.NewUpdateServiceUseCase(u.repoManager.ServiceDetailRepo())
+	return usecase.NewUpdateServiceUseCase(u.repoManager.EditServiceRepo())
 }
 
 func (u *useCaseManager) FindService() usecase.FindServiceUseCase {

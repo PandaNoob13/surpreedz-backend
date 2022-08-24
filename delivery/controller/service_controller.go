@@ -67,31 +67,22 @@ func (s *ServiceController) UpdateService(c *gin.Context) {
 	servId, _ := strconv.Atoi(serviceId)
 	sh, err := s.fdSerUc.FindServiceById(servId)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "BAD REQUEST",
-			"message": err.Error(),
-		})
+		s.Failed(c, err)
+		return
 	} else {
-		var by map[string]interface{}
-		if err := c.ShouldBindJSON(&by); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  "FAILED",
-				"message": err.Error(),
-			})
-		} else {
-			err := s.updSerUc.EditService(&sh, by)
-			if err != nil {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-					"status":  "FAILED",
-					"message": "error when updating service",
-				})
-			} else {
-				c.JSON(http.StatusOK, gin.H{
-					"status":  "SUCCESS",
-					"message": sh,
-				})
-			}
+		s.Success(c, sh)
+		var existService dto.EditServiceDto
+		err := s.ParseRequestBody(c, &existService)
+		if err != nil {
+			s.Failed(c, utils.RequiredError())
+			return
 		}
+		err = s.updSerUc.EditService(sh.ID, &existService)
+		if err != nil {
+			s.Failed(c, err)
+			return
+		}
+		s.Success(c, existService)
 	}
 }
 
