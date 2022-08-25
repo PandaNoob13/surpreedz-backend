@@ -35,6 +35,13 @@ func (o *insertOrderUseCase) AddOrder(orderId int, buyerId, serviceId int, dueDa
 	err := o.orderRepo.Create(&toOrder)
 	utils.IsError(err)
 
+	// toOrderRequest := model.OrderRequest{
+	// 	OrderId:       orderId,
+	// 	Occasion:      insertOrder.Occasion,
+	// 	RecipientName: insertOrder.RecipientName,
+	// 	Message:       insertOrder.Message,
+	// 	Description:   insertOrder.RecipientDescription,
+	// }
 	toOrderRequest := model.OrderRequest{
 		OrderId:       orderId,
 		Occasion:      insertOrder.Occasion,
