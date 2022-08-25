@@ -50,9 +50,9 @@ func (s *ServiceController) InsertService(c *gin.Context) {
 }
 
 func (s *ServiceController) RetrieveHomePage(c *gin.Context) {
-	page := c.Param("page")
+	page := c.Query("page")
 	pg, _ := strconv.Atoi(page)
-	limit := c.Param("limit")
+	limit := c.Query("limit")
 	lm, _ := strconv.Atoi(limit)
 	services, err := s.hPgSrUc.HomePageRetrieveAll(pg, lm)
 	if err != nil {
@@ -63,26 +63,42 @@ func (s *ServiceController) RetrieveHomePage(c *gin.Context) {
 }
 
 func (s *ServiceController) UpdateService(c *gin.Context) {
-	serviceId := c.Param("serviceId")
+	serviceId := c.Query("serviceId")
 	servId, _ := strconv.Atoi(serviceId)
 	sh, err := s.fdSerUc.FindServiceById(servId)
 	if err != nil {
-		s.Failed(c, err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  "FAILED",
+			"message": err.Error(),
+		})
+		// s.Failed(c, err)
 		return
 	} else {
-		s.Success(c, sh)
+		// s.Success(c, sh)
 		var existService dto.EditServiceDto
 		err := s.ParseRequestBody(c, &existService)
 		if err != nil {
-			s.Failed(c, utils.RequiredError())
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  "FAILED",
+				"message": err.Error(),
+			})
+			// s.Failed(c, utils.RequiredError())
 			return
 		}
 		err = s.updSerUc.EditService(sh.ID, &existService)
 		if err != nil {
-			s.Failed(c, err)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"status":  "FAILED",
+				"message": err.Error(),
+			})
+			// s.Failed(c, err)
 			return
 		}
-		s.Success(c, existService)
+		c.JSON(http.StatusOK, gin.H{
+			"status":  "SUCCESS",
+			"message": "Success updating service",
+		})
+		// s.Success(c, existService)
 	}
 }
 
@@ -108,8 +124,8 @@ func NewServiceController(router *gin.Engine, insSerUc usecase.InsertServiceUseC
 	routerService := router.Group("/service-detail")
 	{
 		routerService.POST("/create-service-detail", contoller.InsertService)
-		routerService.PUT("/edit-service-detail/:serviceId", contoller.UpdateService)
-		routerService.GET("/homepage/:page/:limit", contoller.RetrieveHomePage)
+		routerService.PUT("/edit-service-detail/", contoller.UpdateService)
+		routerService.GET("/homepage/", contoller.RetrieveHomePage)
 		routerService.GET("/get-service-detail/:serviceId", contoller.FindServiceById)
 	}
 	return &contoller
