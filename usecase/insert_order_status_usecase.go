@@ -8,7 +8,7 @@ import (
 )
 
 type InsertOrderStatusUseCase interface {
-	AddOrderStatus(orderStatusId int, orderId int, status string, reason string) error
+	AddOrderStatus(orderId int, status string, reason string) error
 }
 
 type insertOrderStatusUseCase struct {
@@ -16,7 +16,7 @@ type insertOrderStatusUseCase struct {
 	refundRepo      repository.RefundRepository
 }
 
-func (i *insertOrderStatusUseCase) AddOrderStatus(orderStatusId int, orderId int, status string, reason string) error {
+func (i *insertOrderStatusUseCase) AddOrderStatus(orderId int, status string, reason string) error {
 	insertOrderStatus := dto.OrderStatusDto{
 		OrderId:       orderId,
 		Status:        status,
@@ -30,8 +30,11 @@ func (i *insertOrderStatusUseCase) AddOrderStatus(orderStatusId int, orderId int
 	err := i.orderStatusRepo.Create(&toOrderStatus)
 	utils.IsError(err)
 
+	orderStatus, err := i.orderStatusRepo.FindByOrderId(orderId)
+	utils.IsError(err)
+
 	toRefund := model.Refund{
-		OrderStatusId: orderStatusId,
+		OrderStatusId: orderStatus.ID,
 		Reason:        insertOrderStatus.ResonOfRefund,
 	}
 	err1 := i.refundRepo.Create(&toRefund)

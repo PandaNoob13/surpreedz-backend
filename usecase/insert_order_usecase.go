@@ -8,7 +8,7 @@ import (
 )
 
 type InsertOrderUseCase interface {
-	AddOrder(buyerId int, serviceId int, orderId int, dueDate string, occasion string, recipientName string, message string, description string) error
+	AddOrder(buyerId int, serviceId int, dueDate string, occasion string, recipientName string, message string, description string) error
 }
 
 type insertOrderUseCase struct {
@@ -16,7 +16,7 @@ type insertOrderUseCase struct {
 	orderRequestRepo repository.OrderRequestRepository
 }
 
-func (o *insertOrderUseCase) AddOrder(orderId int, buyerId, serviceId int, dueDate string, occasion string, recipientName string, message string, description string) error {
+func (o *insertOrderUseCase) AddOrder(buyerId int, serviceId int, dueDate string, occasion string, recipientName string, message string, description string) error {
 	insertOrder := dto.OrderDto{
 		BuyerId:              buyerId,
 		ServiceDetailId:      serviceId,
@@ -35,8 +35,11 @@ func (o *insertOrderUseCase) AddOrder(orderId int, buyerId, serviceId int, dueDa
 	err := o.orderRepo.Create(&toOrder)
 	utils.IsError(err)
 
+	order, err := o.orderRepo.FindByBuyerId(buyerId)
+	utils.IsError(err)
+
 	toOrderRequest := model.OrderRequest{
-		OrderId:       orderId,
+		OrderId:       order.ID,
 		Occasion:      insertOrder.Occasion,
 		RecipientName: insertOrder.RecipientName,
 		Message:       insertOrder.Message,

@@ -11,6 +11,7 @@ type OrderStatusRepository interface {
 	Create(orderStatus *model.OrderStatus) error
 	FindById(id int) (model.OrderStatus, error)
 	FindAll() ([]model.OrderStatus, error)
+	FindByOrderId(id int) (model.OrderStatus, error)
 	UpdateByID(orderStatus *model.OrderStatus, by map[string]interface{}) error
 	Delete(orderStatus *model.OrderStatus) error
 }
@@ -58,6 +59,19 @@ func (o *orderStatusRepository) UpdateByID(orderStatus *model.OrderStatus, by ma
 func (o *orderStatusRepository) Delete(orderStatus *model.OrderStatus) error {
 	result := o.db.Delete(orderStatus).Error
 	return result
+}
+
+func (o *orderStatusRepository) FindByOrderId(id int) (model.OrderStatus, error) {
+	var orderStatus model.OrderStatus
+	result := o.db.Where("mst_order_status.order_id = ?", id).Last(&orderStatus)
+	if err := result.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return orderStatus, nil
+		} else {
+			return orderStatus, err
+		}
+	}
+	return orderStatus, nil
 }
 
 func NewOrderStatusRepository(db *gorm.DB) OrderStatusRepository {
