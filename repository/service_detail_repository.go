@@ -12,7 +12,7 @@ type ServiceDetailRepository interface {
 	FindById(id int) (model.ServiceDetail, error)
 	FindBySellerId(id int) (model.ServiceDetail, error)
 	RetrieveAll(page int, itemPerPage int) ([]model.ServiceDetail, error)
-	HomePageRetrieveAll(page int, itemPerPage int) ([]model.ServiceDetail, error)
+	HomePageRetrieveAll(page int, itemPerPage int) ([]model.Account, error)
 	Update(customersService *model.ServiceDetail, by map[string]interface{}) error
 	Delete(id int) error
 }
@@ -51,10 +51,10 @@ func (s *serviceDetailRepository) RetrieveAll(page int, itemPerPage int) ([]mode
 	return customersServices, nil
 }
 
-func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int) ([]model.ServiceDetail, error) {
-	var homepageServices []model.ServiceDetail
+func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int) ([]model.Account, error) {
+	var homepageServices []model.Account
 	offset := itemPerPage * (page - 1)
-	res := s.db.Order("created_at").Limit(itemPerPage).Offset(offset).Preload("ServicePrices").Preload("VideoProfiles").Find(&homepageServices)
+	res := s.db.Order("created_at").Limit(itemPerPage).Offset(offset).Preload("AccountDetail").Preload("AccountDetail.PhotoProfiles").Preload("ServiceDetail").Preload("ServiceDetail.VideoProfiles").Preload("ServiceDetail.ServicePrices").Find(&homepageServices)
 	if err := res.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -62,7 +62,12 @@ func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int)
 			return nil, err
 		}
 	}
-	return homepageServices, nil
+	for _, hp := range homepageServices {
+		if hp.ServiceDetail.SellerId != 0 {
+			return homepageServices, nil
+		}
+	}
+	return nil, nil
 }
 
 func (s *serviceDetailRepository) FindById(id int) (model.ServiceDetail, error) {
