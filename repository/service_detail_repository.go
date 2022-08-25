@@ -62,7 +62,12 @@ func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int)
 			return nil, err
 		}
 	}
-	return homepageServices, nil
+	for _, hp := range homepageServices {
+		if hp.ServiceDetail.SellerId != 0 {
+			return homepageServices, nil
+		}
+	}
+	return nil, nil
 }
 
 func (s *serviceDetailRepository) FindById(id int) (model.ServiceDetail, error) {
