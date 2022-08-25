@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"strconv"
 	"surpreedz-backend/delivery/api"
 	"surpreedz-backend/model/dto"
 	"surpreedz-backend/usecase"
@@ -18,14 +17,12 @@ type OrderStatusController struct {
 
 func (os *OrderStatusController) InsertOrderStatus(c *gin.Context) {
 	var addOrderStatus dto.OrderStatusDto
-	orderStatusId := c.Param("orderStatusId")
-	ordStatId, _ := strconv.Atoi(orderStatusId)
 	err := os.ParseRequestBody(c, &addOrderStatus)
 	if err != nil {
 		os.Failed(c, utils.RequiredError())
 		return
 	}
-	err = os.insOrdStatUc.AddOrderStatus(ordStatId, addOrderStatus.OrderId, addOrderStatus.Status, addOrderStatus.ResonOfRefund)
+	err = os.insOrdStatUc.AddOrderStatus(addOrderStatus.OrderId, addOrderStatus.Status, addOrderStatus.ResonOfRefund)
 	if err != nil {
 		os.Failed(c, err)
 		return
@@ -40,7 +37,7 @@ func NewOrderStatusController(router *gin.Engine, insOrdStatUc usecase.InsertOrd
 	}
 	routerOrderStatus := router.Group("/order-status")
 	{
-		routerOrderStatus.POST("/create-order-status/:orderStatusId", controller.InsertOrderStatus)
+		routerOrderStatus.POST("/create-order-status", controller.InsertOrderStatus)
 	}
 	return &controller
 }
