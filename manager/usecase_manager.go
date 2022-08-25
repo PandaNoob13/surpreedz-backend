@@ -36,7 +36,7 @@ func (u *useCaseManager) AddOrderStatus() usecase.InsertOrderStatusUseCase {
 }
 
 func (u *useCaseManager) AddOrder() usecase.InsertOrderUseCase {
-	return usecase.NewInsertOrderUseCase(u.repoManager.OrderRepo(), u.repoManager.OrderRequestRepo())
+	return usecase.NewInsertOrderUseCase(u.repoManager.OrderRepo(), u.repoManager.OrderRequestRepo(), u.repoManager.OrderStatusRepo())
 }
 
 func (u *useCaseManager) AddService() usecase.InsertServiceUseCase {

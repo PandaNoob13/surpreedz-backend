@@ -35,7 +35,7 @@ func (e *editAccountRepository) EditAccount(accountEditInfo *dto.AccountEditInfo
 	}
 
 	if err := tx.Model(&accountExist).Updates(map[string]interface{}{
-		"email":    accountEditInfo.Email,
+		// "email":    accountEditInfo.Email,
 		"password": accountEditInfo.Password,
 	}).Error; err != nil {
 		return err

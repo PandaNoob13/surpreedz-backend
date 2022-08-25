@@ -5,6 +5,7 @@ import (
 	"surpreedz-backend/model/dto"
 	"surpreedz-backend/repository"
 	"surpreedz-backend/utils"
+	"time"
 )
 
 type InsertOrderUseCase interface {
@@ -14,6 +15,7 @@ type InsertOrderUseCase interface {
 type insertOrderUseCase struct {
 	orderRepo        repository.OrderRepository
 	orderRequestRepo repository.OrderRequestRepository
+	orderStatusRepo  repository.OrderStatusRepository
 }
 
 func (o *insertOrderUseCase) AddOrder(buyerId int, serviceId int, dueDate string, occasion string, recipientName string, message string, description string) error {
@@ -48,12 +50,22 @@ func (o *insertOrderUseCase) AddOrder(buyerId int, serviceId int, dueDate string
 	err1 := o.orderRequestRepo.Create(&toOrderRequest)
 	utils.IsError(err1)
 
+	toOrderStatus := model.OrderStatus{
+		OrderId: order.ID,
+		Status:  "Requested",
+		Date:    time.Now(),
+	}
+
+	err = o.orderStatusRepo.Create(&toOrderStatus)
+	utils.IsError(err)
+
 	return nil
 }
 
-func NewInsertOrderUseCase(orderRepo repository.OrderRepository, orderRequestRepo repository.OrderRequestRepository) InsertOrderUseCase {
+func NewInsertOrderUseCase(orderRepo repository.OrderRepository, orderRequestRepo repository.OrderRequestRepository, orderStatusRepo repository.OrderStatusRepository) InsertOrderUseCase {
 	return &insertOrderUseCase{
 		orderRepo:        orderRepo,
 		orderRequestRepo: orderRequestRepo,
+		orderStatusRepo:  orderStatusRepo,
 	}
 }
