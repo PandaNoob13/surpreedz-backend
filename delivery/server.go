@@ -45,6 +45,7 @@ func (a *appServer) initControllers() {
 	controller.NewLoginController(a.engine, a.tokenService, a.managerUsecase.FindAccountUseCase())
 	controller.NewSignUpController(a.engine, a.managerUsecase.SignUpAccountUseCase(), a.managerUsecase.FindAccountUseCase())
 	controller.NewEditAccountController(a.engine, a.tokenService, a.managerUsecase.EditAccountInfoUsecase())
+	controller.NewPaymentController(a.engine)
 }
 
 func (a *appServer) Run() {
