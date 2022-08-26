@@ -18,6 +18,7 @@ type RepositoryManager interface {
 	SignUpAccountRepo() repository.SignUpRepository
 	EditAccountRepo() repository.EditAccountRepository
 	EditServiceRepo() repository.EditServiceRepository
+	PasswordRepo() repository.PasswordRepository
 }
 
 type repositoryManager struct {
@@ -82,6 +83,10 @@ func (r *repositoryManager) EditAccountRepo() repository.EditAccountRepository {
 
 func (r *repositoryManager) EditServiceRepo() repository.EditServiceRepository {
 	return repository.NewEditServiceRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) PasswordRepo() repository.PasswordRepository {
+	return repository.NewPasswordRepository(r.infra.SqlDb())
 }
 
 func NewRepositoryManager(infra Infra) RepositoryManager {

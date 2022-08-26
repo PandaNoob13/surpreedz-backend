@@ -42,9 +42,9 @@ func (a *appServer) initControllers() {
 	controller.NewOrderStatusController(a.engine, a.managerUsecase.AddOrderStatus())
 	controller.NewVideoResultController(a.engine, a.managerUsecase.AddVideoResult(), a.managerUsecase.RetrieveAllVideoResult(), a.managerUsecase.FindVideoResultById())
 	controller.NewFeedbackController(a.engine, a.managerUsecase.AddFeedback(), a.managerUsecase.RetrieveAllFeedback(), a.managerUsecase.FindFeedbackById())
-	controller.NewLoginController(a.engine, a.tokenService, a.managerUsecase.FindAccountUseCase())
+	controller.NewLoginController(a.engine, a.tokenService, a.managerUsecase.FindAccountUseCase(), a.managerUsecase.FindPasswordByAccId())
 	controller.NewSignUpController(a.engine, a.managerUsecase.SignUpAccountUseCase(), a.managerUsecase.FindAccountUseCase())
-	controller.NewEditAccountController(a.engine, a.tokenService, a.managerUsecase.EditAccountInfoUsecase())
+	controller.NewEditAccountController(a.engine, a.tokenService, a.managerUsecase.EditAccountInfoUsecase(), a.managerUsecase.FindPasswordByAccId())
 }
 
 func (a *appServer) Run() {

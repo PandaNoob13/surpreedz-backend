@@ -32,8 +32,8 @@ func (s *signUpRepository) SignUpAccount(accountFormInfo *dto.AccountFormInfo) e
 
 	//create account
 	newAccount := &model.Account{
-		Email:    accountFormInfo.Email,
-		Password: accountFormInfo.Password,
+		Email: accountFormInfo.Email,
+		//Password: accountFormInfo.Password,
 		JoinDate: time.Now(),
 	}
 
@@ -53,6 +53,17 @@ func (s *signUpRepository) SignUpAccount(accountFormInfo *dto.AccountFormInfo) e
 			tx.Rollback()
 			return err
 		}
+	}
+
+	//create password
+	newPassword := &model.Password{
+		AccountId: account.ID,
+		Password:  accountFormInfo.Password,
+	}
+
+	if err := tx.Create(newPassword).Error; err != nil {
+		tx.Rollback()
+		return err
 	}
 
 	//create account_detail

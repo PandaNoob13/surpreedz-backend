@@ -7,7 +7,7 @@ import (
 type Account struct {
 	ID            int           `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
 	Email         string        `json:"email" gorm:";not null"`
-	Password      string        `json:"password" gorm:";not null"`
+	//Password      string        `json:"password" gorm:";not null"`
 	AccountDetail AccountDetail `gorm:"foreignKey:AccountId;references:ID"`
 	JoinDate      time.Time     `json:"join_date" gorm:";not null"`
 
