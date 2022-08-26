@@ -20,14 +20,12 @@ type OrderController struct {
 
 func (o *OrderController) InsertOrder(c *gin.Context) {
 	var addOrder dto.OrderDto
-	orderId := c.Param("orderId")
-	ordId, _ := strconv.Atoi(orderId)
 	err := o.ParseRequestBody(c, &addOrder)
 	if err != nil {
 		o.Failed(c, utils.RequiredError())
 		return
 	}
-	err = o.insOrdUc.AddOrder(ordId, addOrder.BuyerId, addOrder.ServiceDetailId, addOrder.DueDate, addOrder.Occasion, addOrder.RecipientName, addOrder.Message, addOrder.RecipientDescription)
+	err = o.insOrdUc.AddOrder(addOrder)
 	if err != nil {
 		o.Failed(c, err)
 		return
@@ -68,7 +66,7 @@ func NewOrderController(router *gin.Engine, insOrdUc usecase.InsertOrderUseCase,
 	}
 	routerOrder := router.Group("/order")
 	{
-		routerOrder.POST("/create-order/:orderId", controller.InsertOrder)
+		routerOrder.POST("/create-order", controller.InsertOrder)
 		routerOrder.GET("get-order/:page/:limit", controller.RetrieveAllOrder)
 		routerOrder.GET("get-order-by-id/:orderId", controller.FindOrderById)
 	}

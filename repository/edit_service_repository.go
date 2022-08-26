@@ -45,6 +45,16 @@ func (e *editServiceRepository) EditService(serviceId int, existService *dto.Edi
 		tx.Rollback()
 		return err
 	}
+
+	toVideoProfile := model.VideoProfile{
+		ServiceDetailId:  serviceId,
+		VideoProfileLink: existService.VideoLink,
+	}
+	if err := tx.Create(&toVideoProfile).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	return tx.Commit().Error
 }
 
