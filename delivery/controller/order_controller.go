@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"strconv"
 	"surpreedz-backend/delivery/api"
 	"surpreedz-backend/model/dto"
@@ -21,6 +22,7 @@ type OrderController struct {
 func (o *OrderController) InsertOrder(c *gin.Context) {
 	var addOrder dto.OrderDto
 	err := o.ParseRequestBody(c, &addOrder)
+	fmt.Println(addOrder)
 	if err != nil {
 		o.Failed(c, utils.RequiredError())
 		return
