@@ -11,9 +11,10 @@ import (
 )
 
 type EditAccountController struct {
-	router       *gin.Engine
-	tokenService utils.Token
-	ucEditAcc    usecase.EditAccountUsecase
+	router            *gin.Engine
+	tokenService      utils.Token
+	ucEditAcc         usecase.EditAccountUsecase
+	ucFindPassByAccid usecase.FindPasswordUseCase
 }
 
 func (e *EditAccountController) editAkunInfo(ctx *gin.Context) {
@@ -25,7 +26,24 @@ func (e *EditAccountController) editAkunInfo(ctx *gin.Context) {
 		return
 	}
 
-	err := e.ucEditAcc.EditAccountInfo(&input)
+	PassRes, err := e.ucFindPassByAccid.FindPasswordById(input.ID)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"status":  "FAILED",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if PassRes.Password != input.OldPassword {
+		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+			"status":  "FAILED",
+			"message": "old password did not match",
+		})
+		return
+	}
+
+	err = e.ucEditAcc.EditAccountInfo(&input)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"status":  "FAILED",
@@ -40,12 +58,13 @@ func (e *EditAccountController) editAkunInfo(ctx *gin.Context) {
 
 }
 
-func NewEditAccountController(router *gin.Engine, tokenService utils.Token, ucEditAcc usecase.EditAccountUsecase) *EditAccountController {
+func NewEditAccountController(router *gin.Engine, tokenService utils.Token, ucEditAcc usecase.EditAccountUsecase, ucFindPassByAccid usecase.FindPasswordUseCase) *EditAccountController {
 
 	controller := EditAccountController{
-		router:       router,
-		tokenService: tokenService,
-		ucEditAcc:    ucEditAcc,
+		router:            router,
+		tokenService:      tokenService,
+		ucEditAcc:         ucEditAcc,
+		ucFindPassByAccid: ucFindPassByAccid,
 	}
 
 	rEditAcc := router.Group("/account", middleware.NewTokenValidator(tokenService).RequireToken())

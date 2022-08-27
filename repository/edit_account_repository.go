@@ -29,12 +29,25 @@ func (e *editAccountRepository) EditAccount(accountEditInfo *dto.AccountEditInfo
 		return err
 	}
 
-	//update account
-	accountExist := model.Account{
-		ID: accountEditInfo.ID,
+	//find id password by account_id
+	var password model.Password
+	result := tx.Where("mst_password.account_id = ?", accountEditInfo.ID).First(&password)
+	if err := result.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			tx.Rollback()
+			return err
+		} else {
+			tx.Rollback()
+			return err
+		}
 	}
 
-	if err := tx.Model(&accountExist).Updates(map[string]interface{}{
+	//update password
+	passwordExist := model.Password{
+		ID: password.ID,
+	}
+
+	if err := tx.Model(&passwordExist).Updates(map[string]interface{}{
 		// "email":    accountEditInfo.Email,
 		"password": accountEditInfo.Password,
 	}).Error; err != nil {
@@ -43,7 +56,7 @@ func (e *editAccountRepository) EditAccount(accountEditInfo *dto.AccountEditInfo
 
 	//find id account_detail by account_id
 	var accountDetail model.AccountDetail
-	result := tx.Where("mst_account_detail.account_id = ?", accountEditInfo.ID).First(&accountDetail)
+	result = tx.Where("mst_account_detail.account_id = ?", accountEditInfo.ID).First(&accountDetail)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			tx.Rollback()

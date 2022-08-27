@@ -11,9 +11,10 @@ import (
 )
 
 type LoginController struct {
-	router           *gin.Engine
-	tokenService     utils.Token
-	ucFindAccByEmail usecase.FindAccountUseCase
+	router            *gin.Engine
+	tokenService      utils.Token
+	ucFindAccByEmail  usecase.FindAccountUseCase
+	ucFindPassByAccId usecase.FindPasswordUseCase
 }
 
 func (l *LoginController) loginAkunCustomer(ctx *gin.Context) {
@@ -35,7 +36,16 @@ func (l *LoginController) loginAkunCustomer(ctx *gin.Context) {
 		return
 	}
 
-	if user.Email == AccRes.Email && user.Password == AccRes.Password {
+	PassRes, err := l.ucFindPassByAccId.FindPasswordById(AccRes.ID)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"status":  "FAILED",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if user.Email == AccRes.Email && user.Password == PassRes.Password {
 		token, err := l.tokenService.CreateAccessToken(&user)
 		if err != nil {
 			fmt.Println(err)
@@ -61,12 +71,13 @@ func (l *LoginController) loginAkunCustomer(ctx *gin.Context) {
 	}
 }
 
-func NewLoginController(router *gin.Engine, tokenService utils.Token, ucFindAccByEmail usecase.FindAccountUseCase) *LoginController {
+func NewLoginController(router *gin.Engine, tokenService utils.Token, ucFindAccByEmail usecase.FindAccountUseCase, ucFindPassByAccId usecase.FindPasswordUseCase) *LoginController {
 
 	controller := LoginController{
-		router:           router,
-		tokenService:     tokenService,
-		ucFindAccByEmail: ucFindAccByEmail,
+		router:            router,
+		tokenService:      tokenService,
+		ucFindAccByEmail:  ucFindAccByEmail,
+		ucFindPassByAccId: ucFindPassByAccId,
 	}
 
 	rLogin := router.Group("/api")
