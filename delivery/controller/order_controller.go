@@ -27,7 +27,7 @@ func (o *OrderController) InsertOrder(c *gin.Context) {
 		o.Failed(c, utils.RequiredError())
 		return
 	}
-	err = o.insOrdUc.AddOrder(addOrder.BuyerId, addOrder.ServiceDetailId, addOrder.DueDate, addOrder.Occasion, addOrder.RecipientName, addOrder.Message, addOrder.RecipientDescription)
+	err = o.insOrdUc.AddOrder(addOrder)
 	if err != nil {
 		o.Failed(c, err)
 		return

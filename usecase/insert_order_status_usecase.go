@@ -1,51 +1,24 @@
 package usecase
 
 import (
-	"surpreedz-backend/model"
 	"surpreedz-backend/model/dto"
 	"surpreedz-backend/repository"
-	"surpreedz-backend/utils"
 )
 
 type InsertOrderStatusUseCase interface {
-	AddOrderStatus(orderId int, status string, reason string) error
+	AddOrderStatus(newOrderStatus *dto.OrderStatusDto) error
 }
 
 type insertOrderStatusUseCase struct {
-	orderStatusRepo repository.OrderStatusRepository
-	refundRepo      repository.RefundRepository
+	addOrderStatusRepo repository.AddOrderStatusRepository
 }
 
-func (i *insertOrderStatusUseCase) AddOrderStatus(orderId int, status string, reason string) error {
-	insertOrderStatus := dto.OrderStatusDto{
-		OrderId:       orderId,
-		Status:        status,
-		ResonOfRefund: reason,
-	}
-
-	toOrderStatus := model.OrderStatus{
-		OrderId: insertOrderStatus.OrderId,
-		Status:  insertOrderStatus.Status,
-	}
-	err := i.orderStatusRepo.Create(&toOrderStatus)
-	utils.IsError(err)
-
-	orderStatus, err := i.orderStatusRepo.FindByOrderId(orderId)
-	utils.IsError(err)
-
-	toRefund := model.Refund{
-		OrderStatusId: orderStatus.ID,
-		Reason:        insertOrderStatus.ResonOfRefund,
-	}
-	err1 := i.refundRepo.Create(&toRefund)
-	utils.IsError(err1)
-
-	return nil
+func (i *insertOrderStatusUseCase) AddOrderStatus(newOrderStatus *dto.OrderStatusDto) error {
+	return i.addOrderStatusRepo.AddOrderStatus(newOrderStatus)
 }
 
-func NewInsertOrderStatusUseCase(orderStatusRepo repository.OrderStatusRepository, refundRepo repository.RefundRepository) InsertOrderStatusUseCase {
+func NewInsertOrderStatusUseCase(addOrderStatusRepo repository.AddOrderStatusRepository) InsertOrderStatusUseCase {
 	return &insertOrderStatusUseCase{
-		orderStatusRepo: orderStatusRepo,
-		refundRepo:      refundRepo,
+		addOrderStatusRepo: addOrderStatusRepo,
 	}
 }

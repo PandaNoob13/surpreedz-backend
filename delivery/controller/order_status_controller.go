@@ -22,7 +22,7 @@ func (os *OrderStatusController) InsertOrderStatus(c *gin.Context) {
 		os.Failed(c, utils.RequiredError())
 		return
 	}
-	err = os.insOrdStatUc.AddOrderStatus(addOrderStatus.OrderId, addOrderStatus.Status, addOrderStatus.ResonOfRefund)
+	err = os.insOrdStatUc.AddOrderStatus(&addOrderStatus)
 	if err != nil {
 		os.Failed(c, err)
 		return

@@ -18,11 +18,26 @@ type RepositoryManager interface {
 	SignUpAccountRepo() repository.SignUpRepository
 	EditAccountRepo() repository.EditAccountRepository
 	EditServiceRepo() repository.EditServiceRepository
+	AddOrderRepo() repository.AddOrderRepository
+	AddOrderStatusRepo() repository.AddOrderStatusRepository
+	AddServiceRepo() repository.AddServiceRepository
 	PasswordRepo() repository.PasswordRepository
 }
 
 type repositoryManager struct {
 	infra Infra
+}
+
+func (r *repositoryManager) AddServiceRepo() repository.AddServiceRepository {
+	return repository.NewAddServiceRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) AddOrderStatusRepo() repository.AddOrderStatusRepository {
+	return repository.NewAddOrderStatusRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) AddOrderRepo() repository.AddOrderRepository {
+	return repository.NewAddOrderRepository(r.infra.SqlDb())
 }
 
 func (r *repositoryManager) AccountRepo() repository.AccountRepository {

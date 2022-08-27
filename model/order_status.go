@@ -1,8 +1,6 @@
 package model
 
-import (
-	"time"
-)
+import "time"
 
 type OrderStatus struct {
 	ID      int       `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
