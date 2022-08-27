@@ -59,6 +59,28 @@ func (o *OrderController) FindOrderById(c *gin.Context) {
 	o.Success(c, order)
 }
 
+func (o *OrderController) FindAllOrderByBuyerId(c *gin.Context) {
+	buyerId := c.Query("buyerId")
+	byrId, _ := strconv.Atoi(buyerId)
+	order, err := o.fdOrdByIdUc.FindAllOrderByBuyerId(byrId)
+	if err != nil {
+		o.Failed(c, err)
+		return
+	}
+	o.Success(c, order)
+}
+
+func (o *OrderController) FindAllOrderByServiceDetailId(c *gin.Context) {
+	buyerId := c.Query("serviceDetailId")
+	byrId, _ := strconv.Atoi(buyerId)
+	order, err := o.fdOrdByIdUc.FindAllOrderByServiceDetailId(byrId)
+	if err != nil {
+		o.Failed(c, err)
+		return
+	}
+	o.Success(c, order)
+}
+
 func NewOrderController(router *gin.Engine, insOrdUc usecase.InsertOrderUseCase, rtAllOrdUc usecase.RetrieveAllOrderUseCase, fdOrdByIdUc usecase.FindOrderByIdUseCase) *OrderController {
 	controller := OrderController{
 		router:      router,
@@ -69,8 +91,11 @@ func NewOrderController(router *gin.Engine, insOrdUc usecase.InsertOrderUseCase,
 	routerOrder := router.Group("/order")
 	{
 		routerOrder.POST("/create-order", controller.InsertOrder)
-		routerOrder.GET("get-order/:page/:limit", controller.RetrieveAllOrder)
-		routerOrder.GET("get-order-by-id/:orderId", controller.FindOrderById)
+		routerOrder.GET("/get-order/:page/:limit", controller.RetrieveAllOrder)
+		routerOrder.GET("/get-order-by-id/:orderId", controller.FindOrderById)
+		routerOrder.GET("/get-all-order-by-buyer-id", controller.FindAllOrderByBuyerId)
+		routerOrder.GET("/get-all-order-by-service-detail-id", controller.FindAllOrderByServiceDetailId)
+
 	}
 	return &controller
 }

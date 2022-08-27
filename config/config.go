@@ -47,8 +47,8 @@ func (c *Config) readConfig() {
 	dbHost := "localhost"
 	dbPort := "5432"
 	dbUser := "postgres"
-	dbPassword := ""
-	dbName := ""
+	dbPassword := "130500"
+	dbName := "surpreedz-database"
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", dbHost, dbUser, dbPassword, dbName, dbPort)
 	c.ApiConfig = ApiConfig{Url: api}

@@ -7,6 +7,8 @@ import (
 
 type FindOrderByIdUseCase interface {
 	FindOrderById(id int) (model.Order, error)
+	FindAllOrderByBuyerId(id int) ([]model.Order, error)
+	FindAllOrderByServiceDetailId(id int) ([]model.Order, error)
 }
 
 type findOrderByIdUseCase struct {
@@ -15,6 +17,14 @@ type findOrderByIdUseCase struct {
 
 func (f *findOrderByIdUseCase) FindOrderById(id int) (model.Order, error) {
 	return f.orderRepo.FindById(id)
+}
+
+func (f *findOrderByIdUseCase) FindAllOrderByBuyerId(id int) ([]model.Order, error) {
+	return f.orderRepo.FindAllByBuyerId(id)
+}
+
+func (f *findOrderByIdUseCase) FindAllOrderByServiceDetailId(id int) ([]model.Order, error) {
+	return f.orderRepo.FindAllByServiceDetailId(id)
 }
 
 func NewFindOrderByIdUseCase(orderRepo repository.OrderRepository) FindOrderByIdUseCase {

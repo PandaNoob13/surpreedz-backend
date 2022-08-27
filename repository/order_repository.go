@@ -12,12 +12,40 @@ type OrderRepository interface {
 	FindById(id int) (model.Order, error)
 	FindAll(page int, itemPerPage int) ([]model.Order, error)
 	FindByBuyerId(id int) (model.Order, error)
+	FindAllByBuyerId(buyerId int) ([]model.Order, error)
+	FindAllByServiceDetailId(serviceDetailId int) ([]model.Order, error)
 	UpdateByID(order *model.Order, by map[string]interface{}) error
 	Delete(order *model.Order) error
 }
 
 type orderRepository struct {
 	db *gorm.DB
+}
+
+func (o *orderRepository) FindAllByBuyerId(buyerId int) ([]model.Order, error) {
+	var order []model.Order
+	result := o.db.Where("mst_order.buyer_id = ?", buyerId).Find(&order)
+	if err := result.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return order, nil
+		} else {
+			return order, err
+		}
+	}
+	return order, nil
+}
+
+func (o *orderRepository) FindAllByServiceDetailId(serviceDetailId int) ([]model.Order, error) {
+	var order []model.Order
+	result := o.db.Where("mst_order.service_detail_id = ?", serviceDetailId).Find(&order)
+	if err := result.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return order, nil
+		} else {
+			return order, err
+		}
+	}
+	return order, nil
 }
 
 func (o *orderRepository) FindByBuyerId(id int) (model.Order, error) {
