@@ -25,6 +25,8 @@ type UseCaseManager interface {
 	FindAccountUseCase() usecase.FindAccountUseCase
 	SignUpAccountUseCase() usecase.SignUpUsecase
 	EditAccountInfoUsecase() usecase.EditAccountUsecase
+
+	FindPasswordByAccId() usecase.FindPasswordUseCase
 }
 
 type useCaseManager struct {
@@ -97,6 +99,10 @@ func (u *useCaseManager) FindFeedbackById() usecase.FindFeedbackByIdUseCase {
 
 func (u *useCaseManager) RetrieveAllFeedback() usecase.RetrieveAllFeedbackUseCase {
 	return usecase.NewRetrieveAllFeedbackUseCase(u.repoManager.FeedbackRepo())
+}
+
+func (u *useCaseManager) FindPasswordByAccId() usecase.FindPasswordUseCase {
+	return usecase.NewFindPasswordUseCase(u.repoManager.PasswordRepo())
 }
 
 func NewUseCaseManager(repoManager RepositoryManager) UseCaseManager {

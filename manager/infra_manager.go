@@ -62,6 +62,7 @@ func initDbResource(dataSourceName string) (*gorm.DB, error) {
 			&model.VideoResult{},
 			&model.Refund{},
 			&model.VideoProfile{},
+			&model.Password{},
 		)
 		if err != nil {
 			return nil, err

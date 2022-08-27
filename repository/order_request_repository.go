@@ -11,12 +11,26 @@ type OrderRequestRepository interface {
 	Create(orderRequest *model.OrderRequest) error
 	FindById(id int) (model.OrderRequest, error)
 	FindAll() ([]model.OrderRequest, error)
+	FindByOrderId(id int) (model.OrderRequest, error)
 	UpdateByID(orderRequest *model.OrderRequest, by map[string]interface{}) error
 	Delete(orderRequest *model.OrderRequest) error
 }
 
 type orderRequestRepository struct {
 	db *gorm.DB
+}
+
+func (o *orderRequestRepository) FindByOrderId(id int) (model.OrderRequest, error) {
+	var orderRequest model.OrderRequest
+	result := o.db.Where("mst_order_request.order_id = ?", id).Last(&orderRequest)
+	if err := result.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return orderRequest, nil
+		} else {
+			return orderRequest, err
+		}
+	}
+	return orderRequest, nil
 }
 
 func (o *orderRequestRepository) Create(orderRequest *model.OrderRequest) error {
