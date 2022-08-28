@@ -1,12 +1,18 @@
 package repository
 
 import (
+	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
+	"log"
+	"strings"
 	"surpreedz-backend/model"
 	"surpreedz-backend/model/dto"
+	"time"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
+	"github.com/gofrs/uuid"
 	"github.com/vincent-petithory/dataurl"
 	"gorm.io/gorm"
 )
@@ -59,21 +65,47 @@ func (e *editAccountRepository) EditProfile(editProfileDto *dto.EditProfileDto) 
 		return err
 	}
 
-	// container, err := e.azr.NewContainerClient("photoprofile")
-	// if err != nil {
-	// 	log.Fatalln("Error getting container client")
-	// }
-	fmt.Println(editProfileDto.DataUrl)
-	dataURL, err := dataurl.DecodeString(editProfileDto.DataUrl)
+	containerClient, err := e.azr.NewContainerClient("photoprofile")
+	if err != nil {
+		log.Fatalln("Error getting container client")
+	}
+
+	uid, err := uuid.NewV4()
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Printf("content type: %s, data: %s\n", dataURL.MediaType.ContentType(), dataURL.Data)
+	splittedUrl := strings.Split(editProfileDto.DataUrl, ",")
+	//contentType := splittedUrl[0]
+	dataUrl := splittedUrl[1]
+	image, err := base64.StdEncoding.DecodeString(dataUrl)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// fmt.Println("Image : ", image)
+
+	_, err = dataurl.DecodeString(editProfileDto.DataUrl)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	blockBlobClient, err := containerClient.NewBlockBlobClient(time.Now().Format("20060102") + uid.String() + ".jpg")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	blobUploadResponse, err := blockBlobClient.UploadBuffer(context.TODO(), image, azblob.UploadOption{})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println("Upload Response : ", blobUploadResponse)
+
+	//fmt.Printf("content type: %s, data: %s\n", dataURL.MediaType.ContentType(), dataURL.Data)
 
 	//create photo_profile
 	newPhotoProfile := &model.PhotoProfile{
 		AccountDetailId: accountDetail.ID,
-		PhotoLink:       "",
+		PhotoLink:       time.Now().Format("20060102") + uid.String() + ".jpg",
 		IsDeleted:       false,
 	}
 
@@ -82,7 +114,7 @@ func (e *editAccountRepository) EditProfile(editProfileDto *dto.EditProfileDto) 
 		return err
 	}
 
-	return tx.Rollback().Error
+	return tx.Commit().Error
 }
 
 func (e *editAccountRepository) EditPassword(EditPasswordDto *dto.EditPasswordDto) error {

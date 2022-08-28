@@ -66,7 +66,6 @@ func (e *EditAccountController) EditAccountProfile(ctx *gin.Context) {
 		})
 		return
 	} else {
-		fmt.Println("IF YOU CAN'T BIND IT, WHY DON'T YOU TELL ME?!?!?!?")
 		fmt.Println(input)
 	}
 

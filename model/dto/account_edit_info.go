@@ -15,7 +15,6 @@ type EditProfileDto struct {
 	AccountId int    `json:"account_id"`
 	Name      string `json:"name"`
 	Location  string `json:"location"`
-	//Photo     string `json:"photo"`
 	PhotoName string `json:"photo_name"`
 	PhotoUrl  string `json:"url"`
 	DataUrl   string `json:"data_url"`

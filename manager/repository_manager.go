@@ -53,7 +53,7 @@ func (r *repositoryManager) PhotoProfileRepo() repository.PhotoProfileRepository
 }
 
 func (r *repositoryManager) ServiceDetailRepo() repository.ServiceDetailRepository {
-	return repository.NewServiceDetailRepository(r.infra.SqlDb())
+	return repository.NewServiceDetailRepository(r.infra.SqlDb(), r.infra.AzrClient())
 }
 
 func (r *repositoryManager) ServicePriceRepo() repository.ServicePriceRepository {

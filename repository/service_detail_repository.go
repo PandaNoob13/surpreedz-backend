@@ -1,9 +1,15 @@
 package repository
 
 import (
+	"context"
+	"encoding/base64"
 	"errors"
+	"fmt"
+	"io"
+	"log"
 	"surpreedz-backend/model"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"gorm.io/gorm"
 )
 
@@ -18,7 +24,8 @@ type ServiceDetailRepository interface {
 }
 
 type serviceDetailRepository struct {
-	db *gorm.DB
+	db  *gorm.DB
+	azr *azblob.ServiceClient
 }
 
 func (s *serviceDetailRepository) Delete(id int) error {
@@ -62,12 +69,36 @@ func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int)
 			return nil, err
 		}
 	}
-	for _, hp := range homepageServices {
+
+	containerClient, err := s.azr.NewContainerClient("photoprofile")
+	if err != nil {
+		log.Fatalln("Error getting container client")
+	}
+	var homePageRetrieval []model.Account
+	for index, hp := range homepageServices {
 		if hp.ServiceDetail.SellerId != 0 {
-			return homepageServices, nil
+			fmt.Println("Log loop : ", index)
+			blockBlobClient, err := containerClient.NewBlockBlobClient(hp.AccountDetail.PhotoProfiles[len(hp.AccountDetail.PhotoProfiles)-1].PhotoLink)
+			if err != nil {
+				fmt.Println(err)
+			}
+			blobDownloadResponse, err := blockBlobClient.Download(context.TODO(), nil)
+			if err != nil {
+				fmt.Println(err)
+			}
+			reader := blobDownloadResponse.Body(nil)
+			downloadData, err := io.ReadAll(reader)
+			if err != nil {
+				fmt.Println(err)
+			}
+			dataUrl := base64.StdEncoding.EncodeToString(downloadData)
+			homepageServices[index].DataUrl = dataUrl
+			homepageServices[index].StringJoinDate = homepageServices[index].JoinDate.Format("2006-January-02")
+			homePageRetrieval = append(homePageRetrieval, homepageServices[index])
+			reader.Close()
 		}
 	}
-	return nil, nil
+	return homePageRetrieval, nil
 }
 
 func (s *serviceDetailRepository) FindById(id int) (model.ServiceDetail, error) {
@@ -101,8 +132,9 @@ func (s *serviceDetailRepository) Insert(customersService *model.ServiceDetail) 
 	return result.Error
 }
 
-func NewServiceDetailRepository(db *gorm.DB) ServiceDetailRepository {
+func NewServiceDetailRepository(db *gorm.DB, azr *azblob.ServiceClient) ServiceDetailRepository {
 	repo := new(serviceDetailRepository)
 	repo.db = db
+	repo.azr = azr
 	return repo
 }

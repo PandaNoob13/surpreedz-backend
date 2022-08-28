@@ -35,7 +35,7 @@ func (l *LoginController) loginAkunCustomer(ctx *gin.Context) {
 		})
 		return
 	}
-
+	AccRes.StringJoinDate = AccRes.JoinDate.Format("2006-January-02")
 	PassRes, err := l.ucFindPassByAccId.FindPasswordByAccountId(AccRes.ID)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
