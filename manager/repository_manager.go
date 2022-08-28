@@ -93,7 +93,7 @@ func (r *repositoryManager) SignUpAccountRepo() repository.SignUpRepository {
 }
 
 func (r *repositoryManager) EditAccountRepo() repository.EditAccountRepository {
-	return repository.NewEditAccountRepository(r.infra.SqlDb())
+	return repository.NewEditAccountRepository(r.infra.SqlDb(), r.infra.AzrClient())
 }
 
 func (r *repositoryManager) EditServiceRepo() repository.EditServiceRepository {

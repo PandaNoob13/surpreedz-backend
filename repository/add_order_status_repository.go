@@ -32,14 +32,14 @@ func (os *addOrderStatusRepository) AddOrderStatus(newOrderStatus *dto.OrderStat
 		return err
 	}
 
-	toRefund := &model.Refund{
-		OrderStatusId: toOrderStatus.ID,
-		Reason:        newOrderStatus.ResonOfRefund,
-	}
-	if err := tx.Create(toRefund).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
+	// toRefund := &model.Refund{
+	// 	OrderStatusId: toOrderStatus.ID,
+	// 	Reason:        newOrderStatus.ResonOfRefund,
+	// }
+	// if err := tx.Create(toRefund).Error; err != nil {
+	// 	tx.Rollback()
+	// 	return err
+	// }
 	return tx.Commit().Error
 }
 

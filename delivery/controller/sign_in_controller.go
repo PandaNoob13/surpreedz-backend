@@ -36,7 +36,7 @@ func (l *LoginController) loginAkunCustomer(ctx *gin.Context) {
 		return
 	}
 
-	PassRes, err := l.ucFindPassByAccId.FindPasswordById(AccRes.ID)
+	PassRes, err := l.ucFindPassByAccId.FindPasswordByAccountId(AccRes.ID)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"status":  "FAILED",
