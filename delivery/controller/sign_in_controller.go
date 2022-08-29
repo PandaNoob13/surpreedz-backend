@@ -8,6 +8,7 @@ import (
 	"surpreedz-backend/utils"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type LoginController struct {
@@ -45,7 +46,9 @@ func (l *LoginController) loginAkunCustomer(ctx *gin.Context) {
 		return
 	}
 
-	if user.Email == AccRes.Email && user.Password == PassRes.Password {
+	err = bcrypt.CompareHashAndPassword([]byte(PassRes.Password), []byte(user.Password))
+
+	if user.Email == AccRes.Email && err == nil {
 		token, err := l.tokenService.CreateAccessToken(&user)
 		if err != nil {
 			fmt.Println(err)

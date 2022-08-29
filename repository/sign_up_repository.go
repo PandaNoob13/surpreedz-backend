@@ -4,6 +4,7 @@ import (
 	"errors"
 	"surpreedz-backend/model"
 	"surpreedz-backend/model/dto"
+	"surpreedz-backend/utils"
 	"time"
 
 	"gorm.io/gorm"
@@ -56,9 +57,11 @@ func (s *signUpRepository) SignUpAccount(accountFormInfo *dto.AccountFormInfo) e
 	}
 
 	//create password
+	passHash, _ := utils.HashPassword(accountFormInfo.Password)
+
 	newPassword := &model.Password{
 		AccountId: account.ID,
-		Password:  accountFormInfo.Password,
+		Password:  passHash,
 	}
 
 	if err := tx.Create(newPassword).Error; err != nil {

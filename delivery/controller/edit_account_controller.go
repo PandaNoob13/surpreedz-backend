@@ -8,6 +8,7 @@ import (
 	"surpreedz-backend/utils"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type EditAccountController struct {
@@ -35,7 +36,9 @@ func (e *EditAccountController) editAkunInfo(ctx *gin.Context) {
 		return
 	}
 
-	if PassRes.Password != input.OldPassword {
+	err = bcrypt.CompareHashAndPassword([]byte(PassRes.Password), []byte(input.OldPassword))
+
+	if err == nil { //PassRes.Password != input.OldPassword {
 		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
 			"status":  "FAILED",
 			"message": "old password did not match",

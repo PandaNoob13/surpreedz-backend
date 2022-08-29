@@ -4,6 +4,7 @@ import (
 	"errors"
 	"surpreedz-backend/model"
 	"surpreedz-backend/model/dto"
+	"surpreedz-backend/utils"
 
 	"gorm.io/gorm"
 )
@@ -43,13 +44,15 @@ func (e *editAccountRepository) EditAccount(accountEditInfo *dto.AccountEditInfo
 	}
 
 	//update password
+	passHash, _ := utils.HashPassword(accountEditInfo.Password)
+
 	passwordExist := model.Password{
 		ID: password.ID,
 	}
 
 	if err := tx.Model(&passwordExist).Updates(map[string]interface{}{
 		// "email":    accountEditInfo.Email,
-		"password": accountEditInfo.Password,
+		"password": passHash,
 	}).Error; err != nil {
 		return err
 	}
