@@ -1,24 +1,30 @@
 package repository
 
 import (
+	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
+	"io"
+	"log"
 	"surpreedz-backend/model"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"gorm.io/gorm"
 )
 
 type AccountRepository interface {
 	Insert(customer *model.Account) error
 	FindById(id int) (model.Account, error)
-	FindByEmail(email string) (model.Account, error)
+	FindByEmail(email string) (model.Account, string, error)
 	RetrieveAll(page int, itemPerPage int) ([]model.Account, error)
 	Update(customer *model.Account, by map[string]interface{}) error
 	Delete(id int) error
 }
 
 type accountRepository struct {
-	db *gorm.DB
+	db  *gorm.DB
+	azr *azblob.ServiceClient
 }
 
 func (a *accountRepository) Delete(id int) error {
@@ -64,19 +70,35 @@ func (a *accountRepository) FindById(id int) (model.Account, error) {
 	return customer, nil
 }
 
-func (a *accountRepository) FindByEmail(email string) (model.Account, error) {
+func (a *accountRepository) FindByEmail(email string) (model.Account, string, error) {
 	var customer model.Account
 	result := a.db.Preload("ServiceDetail.ServicePrices").Preload("ServiceDetail").Preload("AccountDetail.PhotoProfiles").Where("mst_account.email = ?", email).First(&customer)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			// 	return customer, err
-			// } else {
 			fmt.Println(customer)
-			return customer, err
+			return customer, "", err
 		}
 	}
+	containerClient, err := a.azr.NewContainerClient("photoprofile")
+	if err != nil {
+		log.Fatalln("Error getting container client")
+	}
+	blockBlobClient, err := containerClient.NewBlockBlobClient(customer.AccountDetail.PhotoProfiles[len(customer.AccountDetail.PhotoProfiles)-1].PhotoLink)
+	if err != nil {
+		fmt.Println(err)
+	}
+	blobDownloadResponse, err := blockBlobClient.Download(context.TODO(), nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+	reader := blobDownloadResponse.Body(nil)
+	downloadData, err := io.ReadAll(reader)
+	if err != nil {
+		fmt.Println(err)
+	}
+	dataUrl := base64.StdEncoding.EncodeToString(downloadData)
 	fmt.Println("Service detail : ", customer.ServiceDetail)
-	return customer, nil
+	return customer, dataUrl, nil
 }
 
 func (a *accountRepository) Insert(customer *model.Account) error {
@@ -84,8 +106,9 @@ func (a *accountRepository) Insert(customer *model.Account) error {
 	return result.Error
 }
 
-func NewAccountRepository(db *gorm.DB) AccountRepository {
+func NewAccountRepository(db *gorm.DB, azr *azblob.ServiceClient) AccountRepository {
 	repo := new(accountRepository)
 	repo.db = db
+	repo.azr = azr
 	return repo
 }

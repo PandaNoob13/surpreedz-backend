@@ -41,7 +41,7 @@ func (r *repositoryManager) AddOrderRepo() repository.AddOrderRepository {
 }
 
 func (r *repositoryManager) AccountRepo() repository.AccountRepository {
-	return repository.NewAccountRepository(r.infra.SqlDb())
+	return repository.NewAccountRepository(r.infra.SqlDb(), r.infra.AzrClient())
 }
 
 func (r *repositoryManager) AccountDetailRepo() repository.AccountDetailRepository {
@@ -85,7 +85,7 @@ func (r *repositoryManager) RefundRepository() repository.RefundRepository {
 }
 
 func (r *repositoryManager) VideoResultRepo() repository.VideoResultRepository {
-	return repository.NewVideoResultRepository(r.infra.SqlDb())
+	return repository.NewVideoResultRepository(r.infra.SqlDb(), r.infra.AzrClient())
 }
 
 func (r *repositoryManager) SignUpAccountRepo() repository.SignUpRepository {

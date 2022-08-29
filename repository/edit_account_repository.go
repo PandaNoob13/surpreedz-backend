@@ -13,7 +13,6 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"github.com/gofrs/uuid"
-	"github.com/vincent-petithory/dataurl"
 	"gorm.io/gorm"
 )
 
@@ -83,10 +82,10 @@ func (e *editAccountRepository) EditProfile(editProfileDto *dto.EditProfileDto) 
 	}
 	// fmt.Println("Image : ", image)
 
-	_, err = dataurl.DecodeString(editProfileDto.DataUrl)
-	if err != nil {
-		fmt.Println(err)
-	}
+	// _, err = dataurl.DecodeString(editProfileDto.DataUrl)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 
 	blockBlobClient, err := containerClient.NewBlockBlobClient(time.Now().Format("20060102") + uid.String() + ".jpg")
 	if err != nil {

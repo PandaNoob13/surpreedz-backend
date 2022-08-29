@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"gorm.io/gorm"
@@ -18,7 +19,7 @@ type ServiceDetailRepository interface {
 	FindById(id int) (model.ServiceDetail, error)
 	FindBySellerId(id int) (model.ServiceDetail, error)
 	RetrieveAll(page int, itemPerPage int) ([]model.ServiceDetail, error)
-	HomePageRetrieveAll(page int, itemPerPage int) ([]model.Account, error)
+	HomePageRetrieveAll(page int, itemPerPage int) ([]dto.AccountCreateDto, error)
 	Update(customersService *model.ServiceDetail, by map[string]interface{}) error
 	Delete(id int) error
 }
@@ -58,7 +59,7 @@ func (s *serviceDetailRepository) RetrieveAll(page int, itemPerPage int) ([]mode
 	return customersServices, nil
 }
 
-func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int) ([]model.Account, error) {
+func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int) ([]dto.AccountCreateDto, error) {
 	var homepageServices []model.Account
 	offset := itemPerPage * (page - 1)
 	res := s.db.Order("created_at").Limit(itemPerPage).Offset(offset).Preload("AccountDetail").Preload("AccountDetail.PhotoProfiles").Preload("ServiceDetail").Preload("ServiceDetail.VideoProfiles").Preload("ServiceDetail.ServicePrices").Find(&homepageServices)
@@ -74,8 +75,9 @@ func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int)
 	if err != nil {
 		log.Fatalln("Error getting container client")
 	}
-	var homePageRetrieval []model.Account
+	var homePageRetrieval []dto.AccountCreateDto
 	for index, hp := range homepageServices {
+		var tempHomePageRetrieval dto.AccountCreateDto
 		if hp.ServiceDetail.SellerId != 0 {
 			fmt.Println("Log loop : ", index)
 			blockBlobClient, err := containerClient.NewBlockBlobClient(hp.AccountDetail.PhotoProfiles[len(hp.AccountDetail.PhotoProfiles)-1].PhotoLink)
@@ -92,9 +94,10 @@ func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int)
 				fmt.Println(err)
 			}
 			dataUrl := base64.StdEncoding.EncodeToString(downloadData)
-			homepageServices[index].DataUrl = dataUrl
-			homepageServices[index].StringJoinDate = homepageServices[index].JoinDate.Format("2006-January-02")
-			homePageRetrieval = append(homePageRetrieval, homepageServices[index])
+			tempHomePageRetrieval.DataUrl = dataUrl
+			tempHomePageRetrieval.StringJoinDate = homepageServices[index].JoinDate.Format("2006-January-02")
+			tempHomePageRetrieval.Account = homepageServices[index]
+			homePageRetrieval = append(homePageRetrieval, tempHomePageRetrieval)
 			reader.Close()
 		}
 	}
