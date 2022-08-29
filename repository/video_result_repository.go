@@ -5,9 +5,11 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"strings"
 	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
@@ -16,8 +18,8 @@ import (
 )
 
 type VideoResultRepository interface {
-	Create(videoResult *model.VideoResult) error
-	FindById(id int) (model.VideoResult, error)
+	Create(videoResult *model.VideoResult, dataUrlParam string) error
+	FindByOrderId(id int) (dto.VideoResultDto, error)
 	FindAll(page int, itemPerPage int) ([]model.VideoResult, error)
 	UpdateByID(videoResult *model.VideoResult, by map[string]interface{}) error
 	Delete(videoResult *model.VideoResult) error
@@ -28,7 +30,7 @@ type videoResultRepository struct {
 	azr *azblob.ServiceClient
 }
 
-func (v *videoResultRepository) Create(videoResult *model.VideoResult) error {
+func (v *videoResultRepository) Create(videoResult *model.VideoResult, dataUrlParam string) error {
 
 	tx := v.db.Begin()
 	defer func() {
@@ -50,7 +52,7 @@ func (v *videoResultRepository) Create(videoResult *model.VideoResult) error {
 		fmt.Println(err)
 	}
 
-	splittedUrl := strings.Split(videoResult.DataUrl, ",")
+	splittedUrl := strings.Split(dataUrlParam, ",")
 	//contentType := splittedUrl[0]
 	dataUrl := splittedUrl[1]
 	video, err := base64.StdEncoding.DecodeString(dataUrl)
@@ -81,17 +83,43 @@ func (v *videoResultRepository) Create(videoResult *model.VideoResult) error {
 	return tx.Commit().Error
 }
 
-func (v *videoResultRepository) FindById(id int) (model.VideoResult, error) {
+func (v *videoResultRepository) FindByOrderId(id int) (dto.VideoResultDto, error) {
 	var videoResult model.VideoResult
 	result := v.db.First(&videoResult, "order_id = ?", id)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return videoResult, nil
+			return dto.VideoResultDto{}, nil
 		} else {
-			return videoResult, err
+			return dto.VideoResultDto{}, err
 		}
 	}
-	return videoResult, nil
+	var videoData dto.VideoResultDto
+	containerClient, err := v.azr.NewContainerClient("videoresult")
+	if err != nil {
+		log.Fatalln("Error getting container client")
+	}
+	blockBlobClient, err := containerClient.NewBlockBlobClient(videoResult.VideoLink)
+	if err != nil {
+		fmt.Println(err)
+	}
+	blobDownloadResponse, err := blockBlobClient.Download(context.TODO(), nil)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		reader := blobDownloadResponse.Body(nil)
+		downloadData, err := io.ReadAll(reader)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			dataUrl := base64.StdEncoding.EncodeToString(downloadData)
+			videoData.VideoLink = videoResult.VideoLink
+			videoData.DataUrl = dataUrl
+			videoData.OrderId = videoResult.OrderId
+			reader.Close()
+		}
+	}
+
+	return videoData, nil
 }
 
 func (v *videoResultRepository) FindAll(page int, itemPerPage int) ([]model.VideoResult, error) {

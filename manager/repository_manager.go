@@ -69,7 +69,7 @@ func (r *repositoryManager) FeedbackRepo() repository.FeedbackRepository {
 }
 
 func (r *repositoryManager) OrderRepo() repository.OrderRepository {
-	return repository.NewOrderRepository(r.infra.SqlDb())
+	return repository.NewOrderRepository(r.infra.SqlDb(), r.infra.AzrClient())
 }
 
 func (r *repositoryManager) OrderRequestRepo() repository.OrderRequestRepository {

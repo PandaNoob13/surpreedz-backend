@@ -1,5 +1,7 @@
 package dto
 
+import "surpreedz-backend/model"
+
 type AccountEditInfo struct {
 	ID          int    `json:"id"`
 	Email       string `json:"email"`
@@ -24,4 +26,12 @@ type EditPasswordDto struct {
 	AccountId   int    `json:"account_id"`
 	OldPassword string `json:"old_password"`
 	Password    string `json:"password"`
+}
+
+type AccountCreateDto struct {
+	model.Account  `json:"account"`
+	DataUrl        string `json:"data_url"`
+	StringJoinDate string `json:"string_join_date"`
+
+	model.Base_model
 }

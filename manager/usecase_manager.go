@@ -13,7 +13,7 @@ type UseCaseManager interface {
 
 	AddVideoResult() usecase.AddVideoResultUseCase
 	RetrieveAllVideoResult() usecase.RetrieveAllVideoResultUseCase
-	FindVideoResultById() usecase.FindVideoResultByIdUseCase
+	FindVideoResultById() usecase.FindVideoResultByOrderIdUseCase
 
 	RetrieveAllOrder() usecase.RetrieveAllOrderUseCase
 	FindOrderById() usecase.FindOrderByIdUseCase
@@ -77,7 +77,7 @@ func (u *useCaseManager) RetrieveAllVideoResult() usecase.RetrieveAllVideoResult
 	return usecase.NewRetrieveAllVideoResult(u.repoManager.VideoResultRepo())
 }
 
-func (u *useCaseManager) FindVideoResultById() usecase.FindVideoResultByIdUseCase {
+func (u *useCaseManager) FindVideoResultById() usecase.FindVideoResultByOrderIdUseCase {
 	return usecase.NewFindVideoResultByIdUseCase(u.repoManager.VideoResultRepo())
 }
 

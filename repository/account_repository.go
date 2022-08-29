@@ -90,15 +90,19 @@ func (a *accountRepository) FindByEmail(email string) (model.Account, string, er
 	blobDownloadResponse, err := blockBlobClient.Download(context.TODO(), nil)
 	if err != nil {
 		fmt.Println(err)
+	} else {
+		fmt.Println("BlobDownloadResponse: ", blobDownloadResponse)
+		reader := blobDownloadResponse.Body(nil)
+		downloadData, err := io.ReadAll(reader)
+		if err != nil {
+			fmt.Println(err)
+		}
+		dataUrl := base64.StdEncoding.EncodeToString(downloadData)
+		fmt.Println("Service detail : ", customer.ServiceDetail)
+		return customer, dataUrl, nil
 	}
-	reader := blobDownloadResponse.Body(nil)
-	downloadData, err := io.ReadAll(reader)
-	if err != nil {
-		fmt.Println(err)
-	}
-	dataUrl := base64.StdEncoding.EncodeToString(downloadData)
-	fmt.Println("Service detail : ", customer.ServiceDetail)
-	return customer, dataUrl, nil
+	return customer, "", nil
+
 }
 
 func (a *accountRepository) Insert(customer *model.Account) error {

@@ -64,53 +64,46 @@ func (e *editAccountRepository) EditProfile(editProfileDto *dto.EditProfileDto) 
 		return err
 	}
 
-	containerClient, err := e.azr.NewContainerClient("photoprofile")
-	if err != nil {
-		log.Fatalln("Error getting container client")
-	}
+	if editProfileDto.DataUrl != "" {
+		containerClient, err := e.azr.NewContainerClient("photoprofile")
+		if err != nil {
+			log.Fatalln("Error getting container client")
+		}
 
-	uid, err := uuid.NewV4()
-	if err != nil {
-		fmt.Println(err)
-	}
-	splittedUrl := strings.Split(editProfileDto.DataUrl, ",")
-	//contentType := splittedUrl[0]
-	dataUrl := splittedUrl[1]
-	image, err := base64.StdEncoding.DecodeString(dataUrl)
-	if err != nil {
-		fmt.Println(err)
-	}
-	// fmt.Println("Image : ", image)
+		uid, err := uuid.NewV4()
+		if err != nil {
+			fmt.Println(err)
+		}
+		splittedUrl := strings.Split(editProfileDto.DataUrl, ",")
+		//contentType := splittedUrl[0]
+		dataUrl := splittedUrl[1]
+		image, err := base64.StdEncoding.DecodeString(dataUrl)
+		if err != nil {
+			fmt.Println(err)
+		}
+		blockBlobClient, err := containerClient.NewBlockBlobClient(time.Now().Format("20060102") + uid.String() + ".jpg")
+		if err != nil {
+			fmt.Println(err)
+		}
 
-	// _, err = dataurl.DecodeString(editProfileDto.DataUrl)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
+		blobUploadResponse, err := blockBlobClient.UploadBuffer(context.TODO(), image, azblob.UploadOption{})
+		if err != nil {
+			fmt.Println(err)
+		}
 
-	blockBlobClient, err := containerClient.NewBlockBlobClient(time.Now().Format("20060102") + uid.String() + ".jpg")
-	if err != nil {
-		fmt.Println(err)
-	}
+		fmt.Println("Upload Response : ", blobUploadResponse)
 
-	blobUploadResponse, err := blockBlobClient.UploadBuffer(context.TODO(), image, azblob.UploadOption{})
-	if err != nil {
-		fmt.Println(err)
-	}
+		//create photo_profile
+		newPhotoProfile := &model.PhotoProfile{
+			AccountDetailId: accountDetail.ID,
+			PhotoLink:       time.Now().Format("20060102") + uid.String() + ".jpg",
+			IsDeleted:       false,
+		}
 
-	fmt.Println("Upload Response : ", blobUploadResponse)
-
-	//fmt.Printf("content type: %s, data: %s\n", dataURL.MediaType.ContentType(), dataURL.Data)
-
-	//create photo_profile
-	newPhotoProfile := &model.PhotoProfile{
-		AccountDetailId: accountDetail.ID,
-		PhotoLink:       time.Now().Format("20060102") + uid.String() + ".jpg",
-		IsDeleted:       false,
-	}
-
-	if err := tx.Create(newPhotoProfile).Error; err != nil {
-		tx.Rollback()
-		return err
+		if err := tx.Create(newPhotoProfile).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
 	}
 
 	return tx.Commit().Error

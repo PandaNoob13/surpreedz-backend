@@ -92,13 +92,14 @@ func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int)
 			downloadData, err := io.ReadAll(reader)
 			if err != nil {
 				fmt.Println(err)
+			} else {
+				dataUrl := base64.StdEncoding.EncodeToString(downloadData)
+				tempHomePageRetrieval.DataUrl = dataUrl
+				tempHomePageRetrieval.Account = homepageServices[index]
+				homePageRetrieval = append(homePageRetrieval, tempHomePageRetrieval)
+				reader.Close()
 			}
-			dataUrl := base64.StdEncoding.EncodeToString(downloadData)
-			tempHomePageRetrieval.DataUrl = dataUrl
 			tempHomePageRetrieval.StringJoinDate = homepageServices[index].JoinDate.Format("2006-January-02")
-			tempHomePageRetrieval.Account = homepageServices[index]
-			homePageRetrieval = append(homePageRetrieval, tempHomePageRetrieval)
-			reader.Close()
 		}
 	}
 	return homePageRetrieval, nil

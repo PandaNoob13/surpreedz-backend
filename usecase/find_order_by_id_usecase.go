@@ -2,12 +2,13 @@ package usecase
 
 import (
 	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/repository"
 )
 
 type FindOrderByIdUseCase interface {
 	FindOrderById(id int) (model.Order, error)
-	FindAllOrderByBuyerId(id int) ([]model.Order, error)
+	FindAllOrderByBuyerId(id int) ([]dto.AccountCreateDto, error)
 	FindAllOrderByServiceDetailId(id int) ([]model.Account, error)
 }
 
@@ -19,7 +20,7 @@ func (f *findOrderByIdUseCase) FindOrderById(id int) (model.Order, error) {
 	return f.orderRepo.FindById(id)
 }
 
-func (f *findOrderByIdUseCase) FindAllOrderByBuyerId(id int) ([]model.Order, error) {
+func (f *findOrderByIdUseCase) FindAllOrderByBuyerId(id int) ([]dto.AccountCreateDto, error) {
 	return f.orderRepo.FindAllByBuyerId(id)
 }
 
