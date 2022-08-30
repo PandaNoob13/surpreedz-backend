@@ -43,16 +43,16 @@ func (o *orderRepository) FindAllByBuyerId(buyerId int) ([]dto.AccountCreateDto,
 	}
 	var sellerAccountList []model.Account
 	accountResult := o.db.Joins("join mst_service_detail on mst_service_detail.seller_id = mst_account.id")
-	accountResult = accountResult.Distinct("mst_account.id").Where("mst_service_detail.id = ?", listOfServiceDetailId).Preload("AccountDetail").Preload("AccountDetail.PhotoProfiles").Preload("ServiceDetail").Preload("ServiceDetail.ServicePrices").First(&sellerAccountList)
+	accountResult = accountResult.Distinct("mst_account.id").Where("mst_service_detail.id in (?)", listOfServiceDetailId).Preload("AccountDetail").Preload("AccountDetail.PhotoProfiles").Preload("ServiceDetail").Preload("ServiceDetail.ServicePrices").Find(&sellerAccountList)
 	if err := accountResult.Error; err != nil {
 		return []dto.AccountCreateDto{}, err
 	}
 	//fmt.Println("Seller account list : ", sellerAccountList)
-	for accountIndex := range sellerAccountList {
+	for accountIndex, accountValue := range sellerAccountList {
 		var rightOrders []model.Order
 		for _, orderValue := range orders {
 			fmt.Println("Order : ", orderValue)
-			if orderValue.BuyerId == buyerId {
+			if orderValue.ServiceDetailId == accountValue.ServiceDetail.ID {
 				rightOrders = append(rightOrders, orderValue)
 			}
 		}
