@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"surpreedz-backend/config"
 	"surpreedz-backend/model"
 	"surpreedz-backend/model/dto"
@@ -87,11 +86,11 @@ func (t *token) VerifyAccessToken(tokenString string) (*model.AccessDetail, erro
 		return []byte(t.cfg.JwtSignatureKey), nil
 	})
 	if err != nil {
-		log.Fatalln("Error parsing token")
+		fmt.Println("Error parsing token")
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid || claims["iss"] != t.cfg.ApplicationName {
-		log.Fatalln("Token invalid...")
+		fmt.Println("Token invalid...")
 		return nil, err
 	}
 
