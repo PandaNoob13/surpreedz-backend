@@ -5,21 +5,28 @@ import (
 	"surpreedz-backend/config"
 	"surpreedz-backend/model"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 type Infra interface {
 	SqlDb() *gorm.DB
+	AzrClient() *azblob.ServiceClient
 }
 
 type infra struct {
-	db  *gorm.DB
-	cfg config.Config
+	db         *gorm.DB
+	azrService *azblob.ServiceClient
+	cfg        config.Config
 }
 
 func (i *infra) SqlDb() *gorm.DB {
 	return i.db
+}
+
+func (i *infra) AzrClient() *azblob.ServiceClient {
+	return i.azrService
 }
 
 func NewInfra(config config.Config) Infra {
@@ -28,11 +35,26 @@ func NewInfra(config config.Config) Infra {
 		log.Fatal(err.Error())
 	}
 
+	service, err := initAzureService(config.AzureConfig)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
 	infra := infra{
-		cfg: config,
-		db:  resource,
+		cfg:        config,
+		azrService: service,
+		db:         resource,
 	}
 	return &infra
+}
+
+func initAzureService(azureConfig config.AzureConfig) (*azblob.ServiceClient, error) {
+	cred, err := azblob.NewSharedKeyCredential(azureConfig.AccountName, azureConfig.AccountKey)
+	if err != nil {
+		panic("Can't connect to surpreedz azure storage")
+	}
+	serviceClient, err := azblob.NewServiceClientWithSharedKey(azureConfig.ServiceUrl, cred, nil)
+	return serviceClient, err
 }
 
 func initDbResource(dataSourceName string) (*gorm.DB, error) {

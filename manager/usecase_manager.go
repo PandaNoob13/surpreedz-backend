@@ -13,7 +13,7 @@ type UseCaseManager interface {
 
 	AddVideoResult() usecase.AddVideoResultUseCase
 	RetrieveAllVideoResult() usecase.RetrieveAllVideoResultUseCase
-	FindVideoResultById() usecase.FindVideoResultByIdUseCase
+	FindVideoResultById() usecase.FindVideoResultByOrderIdUseCase
 
 	RetrieveAllOrder() usecase.RetrieveAllOrderUseCase
 	FindOrderById() usecase.FindOrderByIdUseCase
@@ -34,15 +34,15 @@ type useCaseManager struct {
 }
 
 func (u *useCaseManager) AddOrderStatus() usecase.InsertOrderStatusUseCase {
-	return usecase.NewInsertOrderStatusUseCase(u.repoManager.OrderStatusRepo(), u.repoManager.RefundRepository())
+	return usecase.NewInsertOrderStatusUseCase(u.repoManager.AddOrderStatusRepo())
 }
 
 func (u *useCaseManager) AddOrder() usecase.InsertOrderUseCase {
-	return usecase.NewInsertOrderUseCase(u.repoManager.OrderRepo(), u.repoManager.OrderRequestRepo(), u.repoManager.OrderStatusRepo())
+	return usecase.NewInsertOrderUseCase(u.repoManager.AddOrderRepo())
 }
 
 func (u *useCaseManager) AddService() usecase.InsertServiceUseCase {
-	return usecase.NewInsertServiceUseCase(u.repoManager.AccountDetailRepo(), u.repoManager.ServiceDetailRepo(), u.repoManager.ServicePriceRepo(), u.repoManager.VideoProfileRepo())
+	return usecase.NewInsertServiceUseCase(u.repoManager.AddServiceRepo())
 }
 
 func (u *useCaseManager) UpdateService() usecase.UpdateServiceUseCase {
@@ -77,7 +77,7 @@ func (u *useCaseManager) RetrieveAllVideoResult() usecase.RetrieveAllVideoResult
 	return usecase.NewRetrieveAllVideoResult(u.repoManager.VideoResultRepo())
 }
 
-func (u *useCaseManager) FindVideoResultById() usecase.FindVideoResultByIdUseCase {
+func (u *useCaseManager) FindVideoResultById() usecase.FindVideoResultByOrderIdUseCase {
 	return usecase.NewFindVideoResultByIdUseCase(u.repoManager.VideoResultRepo())
 }
 

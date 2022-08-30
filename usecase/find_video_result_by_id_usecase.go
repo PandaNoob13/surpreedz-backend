@@ -1,24 +1,24 @@
 package usecase
 
 import (
-	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/repository"
 )
 
-type FindVideoResultByIdUseCase interface {
-	FindVideoResultById(id int) (model.VideoResult, error)
+type FindVideoResultByOrderIdUseCase interface {
+	FindVideoResultByOrderId(id int) (dto.VideoResultDto, error)
 }
 
-type findVideoResultByIdUseCase struct {
+type findVideoResultByOrderIdUseCase struct {
 	videoResultRepo repository.VideoResultRepository
 }
 
-func (v *findVideoResultByIdUseCase) FindVideoResultById(id int) (model.VideoResult, error) {
-	return v.videoResultRepo.FindById(id)
+func (v *findVideoResultByOrderIdUseCase) FindVideoResultByOrderId(id int) (dto.VideoResultDto, error) {
+	return v.videoResultRepo.FindByOrderId(id)
 }
 
-func NewFindVideoResultByIdUseCase(videoResultRepo repository.VideoResultRepository) FindVideoResultByIdUseCase {
-	return &findVideoResultByIdUseCase{
+func NewFindVideoResultByIdUseCase(videoResultRepo repository.VideoResultRepository) FindVideoResultByOrderIdUseCase {
+	return &findVideoResultByOrderIdUseCase{
 		videoResultRepo: videoResultRepo,
 	}
 }

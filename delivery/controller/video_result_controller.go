@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"surpreedz-backend/delivery/api"
 	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/usecase"
 	"surpreedz-backend/utils"
 
@@ -14,18 +15,22 @@ type VideoResultController struct {
 	router         *gin.Engine
 	insVidResUc    usecase.AddVideoResultUseCase
 	rtAllVidResUc  usecase.RetrieveAllVideoResultUseCase
-	fdVidResByIdUc usecase.FindVideoResultByIdUseCase
+	fdVidResByIdUc usecase.FindVideoResultByOrderIdUseCase
 	api.BaseApi
 }
 
 func (v *VideoResultController) InsertVideoResult(c *gin.Context) {
-	var addVideoResult model.VideoResult
+	var addVideoResult dto.VideoResultDto
 	err := v.ParseRequestBody(c, &addVideoResult)
 	if err != nil {
 		v.Failed(c, utils.RequiredError())
 		return
 	}
-	err = v.insVidResUc.AddVideoResult(&addVideoResult)
+	videoResult := model.VideoResult{
+		OrderId:   addVideoResult.OrderId,
+		VideoLink: addVideoResult.VideoLink,
+	}
+	err = v.insVidResUc.AddVideoResult(&videoResult, addVideoResult.DataUrl)
 	if err != nil {
 		v.Failed(c, err)
 		return
@@ -46,10 +51,10 @@ func (v *VideoResultController) RetriveAllVideoResult(c *gin.Context) {
 	v.Success(c, videoResults)
 }
 
-func (v *VideoResultController) FindVideoResultById(c *gin.Context) {
-	videoResultId := c.Param("videoResultId")
+func (v *VideoResultController) FindVideoResultByOrderId(c *gin.Context) {
+	videoResultId := c.Query("orderId")
 	vidResId, _ := strconv.Atoi(videoResultId)
-	vr, err := v.fdVidResByIdUc.FindVideoResultById(vidResId)
+	vr, err := v.fdVidResByIdUc.FindVideoResultByOrderId(vidResId)
 	if err != nil {
 		v.Failed(c, err)
 		return
@@ -57,7 +62,7 @@ func (v *VideoResultController) FindVideoResultById(c *gin.Context) {
 	v.Success(c, vr)
 }
 
-func NewVideoResultController(router *gin.Engine, insVidResUc usecase.AddVideoResultUseCase, rtAllVidResUc usecase.RetrieveAllVideoResultUseCase, fdVidResByIdUc usecase.FindVideoResultByIdUseCase) *VideoResultController {
+func NewVideoResultController(router *gin.Engine, insVidResUc usecase.AddVideoResultUseCase, rtAllVidResUc usecase.RetrieveAllVideoResultUseCase, fdVidResByIdUc usecase.FindVideoResultByOrderIdUseCase) *VideoResultController {
 	controller := VideoResultController{
 		router:         router,
 		insVidResUc:    insVidResUc,
@@ -68,7 +73,7 @@ func NewVideoResultController(router *gin.Engine, insVidResUc usecase.AddVideoRe
 	{
 		routerVideoResult.POST("/create-video-result", controller.InsertVideoResult)
 		routerVideoResult.GET("/get-video-result/:page/:limit", controller.RetriveAllVideoResult)
-		routerVideoResult.GET("get-video-result-by-id/:videoResultId", controller.FindVideoResultById)
+		routerVideoResult.GET("/get-video-result-by-order-id", controller.FindVideoResultByOrderId)
 	}
 	return &controller
 }

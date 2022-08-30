@@ -8,14 +8,14 @@ import (
 )
 
 type PasswordRepository interface {
-	FindById(id int) (model.Password, error)
+	FindByAccountId(id int) (model.Password, error)
 }
 
 type passwordRepository struct {
 	db *gorm.DB
 }
 
-func (p *passwordRepository) FindById(id int) (model.Password, error) {
+func (p *passwordRepository) FindByAccountId(id int) (model.Password, error) {
 	var password model.Password
 	result := p.db.Where("mst_password.account_id = ?", id).First(&password)
 	if err := result.Error; err != nil {
