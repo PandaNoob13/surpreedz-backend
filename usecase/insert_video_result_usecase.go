@@ -6,15 +6,15 @@ import (
 )
 
 type AddVideoResultUseCase interface {
-	AddVideoResult(videoResult *model.VideoResult) error
+	AddVideoResult(videoResult *model.VideoResult, dataUrlParam string) error
 }
 
 type addVideoResultUseCase struct {
 	videoResultRepo repository.VideoResultRepository
 }
 
-func (v *addVideoResultUseCase) AddVideoResult(videoResult *model.VideoResult) error {
-	return v.videoResultRepo.Create(videoResult)
+func (v *addVideoResultUseCase) AddVideoResult(videoResult *model.VideoResult, dataUrlParam string) error {
+	return v.videoResultRepo.Create(videoResult, dataUrlParam)
 }
 
 func NewAddVideoResultUseCase(videoResultRepo repository.VideoResultRepository) AddVideoResultUseCase {

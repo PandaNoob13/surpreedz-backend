@@ -6,15 +6,20 @@ import (
 )
 
 type EditAccountUsecase interface {
-	EditAccountInfo(accountEditInfo *dto.AccountEditInfo) error
+	EditProfile(editProfileDto *dto.EditProfileDto) error
+	EditPassword(EditPasswordDto *dto.EditPasswordDto) error
 }
 
 type editAccountUsecase struct {
 	editAccountRepo repository.EditAccountRepository
 }
 
-func (e *editAccountUsecase) EditAccountInfo(accountEditInfo *dto.AccountEditInfo) error {
-	return e.editAccountRepo.EditAccount(accountEditInfo)
+func (e *editAccountUsecase) EditProfile(editProfile *dto.EditProfileDto) error {
+	return e.editAccountRepo.EditProfile(editProfile)
+}
+
+func (e *editAccountUsecase) EditPassword(editPassword *dto.EditPasswordDto) error {
+	return e.editAccountRepo.EditPassword(editPassword)
 }
 
 func NewEditAccountUsecase(editAccountRepo repository.EditAccountRepository) EditAccountUsecase {

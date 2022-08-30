@@ -27,7 +27,7 @@ func (l *LoginController) loginAkunCustomer(ctx *gin.Context) {
 		return
 	}
 
-	AccRes, err := l.ucFindAccByEmail.FindAccountByEmail(user.Email)
+	AccRes, dataUrl, err := l.ucFindAccByEmail.FindAccountByEmail(user.Email)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"status":  "FAILED",
@@ -35,8 +35,12 @@ func (l *LoginController) loginAkunCustomer(ctx *gin.Context) {
 		})
 		return
 	}
-
-	PassRes, err := l.ucFindPassByAccId.FindPasswordById(AccRes.ID)
+	AccDtoRes := dto.AccountCreateDto{
+		Account: AccRes,
+	}
+	AccDtoRes.StringJoinDate = AccRes.JoinDate.Format("2006-January-02")
+	AccDtoRes.DataUrl = dataUrl
+	PassRes, err := l.ucFindPassByAccId.FindPasswordByAccountId(AccRes.ID)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"status":  "FAILED",
@@ -62,7 +66,7 @@ func (l *LoginController) loginAkunCustomer(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"status":  "SUCCESS",
 			"token":   token,
-			"account": AccRes,
+			"account": AccDtoRes,
 		})
 	} else {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{

@@ -25,7 +25,7 @@ func (s *SignUpController) buatAkunBaru(ctx *gin.Context) {
 		return
 	}
 
-	_, err := s.ucFindAccountByEmail.FindAccountByEmail(input.Email)
+	_, _, err := s.ucFindAccountByEmail.FindAccountByEmail(input.Email)
 	if err == nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"status":  "FAILED",
@@ -43,7 +43,7 @@ func (s *SignUpController) buatAkunBaru(ctx *gin.Context) {
 		return
 	}
 
-	AccRes, err := s.ucFindAccountByEmail.FindAccountByEmail(input.Email)
+	AccRes, _, err := s.ucFindAccountByEmail.FindAccountByEmail(input.Email)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"status":  "FAILED",

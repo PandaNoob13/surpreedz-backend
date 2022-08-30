@@ -20,6 +20,12 @@ type DbConfig struct {
 // 	UrlGrpc string
 // }
 
+type AzureConfig struct {
+	AccountName string
+	AccountKey  string
+	ServiceUrl  string
+}
+
 type TokenConfig struct {
 	ApplicationName     string
 	JwtSingingMethod    *jwt.SigningMethodHMAC
@@ -31,8 +37,8 @@ type TokenConfig struct {
 type Config struct {
 	ApiConfig
 	DbConfig
-	// GrpcConfig
 	TokenConfig
+	AzureConfig
 }
 
 func (c *Config) readConfig() {
@@ -47,8 +53,8 @@ func (c *Config) readConfig() {
 	dbHost := "localhost"
 	dbPort := "5432"
 	dbUser := "postgres"
-	dbPassword := ""
-	dbName := ""
+	dbPassword := "130500"
+	dbName := "surpreedz-database"
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", dbHost, dbUser, dbPassword, dbName, dbPort)
 	c.ApiConfig = ApiConfig{Url: api}
@@ -58,12 +64,17 @@ func (c *Config) readConfig() {
 		ApplicationName:     "SURPREEDZ",
 		JwtSingingMethod:    jwt.SigningMethodHS256,
 		JwtSignatureKey:     "5URPR33DZ",
-		AccessTokenLifeTIme: 60 * time.Second,
+		AccessTokenLifeTIme: 600 * time.Second,
 		Client: redis.NewClient(&redis.Options{
 			Addr:     "localhost:6379",
 			Password: "",
 			DB:       0,
 		}),
+	}
+	c.AzureConfig = AzureConfig{
+		AccountName: "surpreedzstorage",
+		AccountKey:  "HyW6McOCrbRuUsUGHGfmO779E9cJCIc1pqAOEAA6KQ2zZVX12ZiBiQKpCF3+Y65ZT03ORahhLWZH+ASt5cHWaA==",
+		ServiceUrl:  "https://surpreedzstorage.blob.core.windows.net/",
 	}
 }
 

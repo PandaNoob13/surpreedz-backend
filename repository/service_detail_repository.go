@@ -1,9 +1,16 @@
 package repository
 
 import (
+	"context"
+	"encoding/base64"
 	"errors"
+	"fmt"
+	"io"
+	"log"
 	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"gorm.io/gorm"
 )
 
@@ -12,13 +19,14 @@ type ServiceDetailRepository interface {
 	FindById(id int) (model.ServiceDetail, error)
 	FindBySellerId(id int) (model.ServiceDetail, error)
 	RetrieveAll(page int, itemPerPage int) ([]model.ServiceDetail, error)
-	HomePageRetrieveAll(page int, itemPerPage int) ([]model.Account, error)
+	HomePageRetrieveAll(page int, itemPerPage int) ([]dto.AccountCreateDto, error)
 	Update(customersService *model.ServiceDetail, by map[string]interface{}) error
 	Delete(id int) error
 }
 
 type serviceDetailRepository struct {
-	db *gorm.DB
+	db  *gorm.DB
+	azr *azblob.ServiceClient
 }
 
 func (s *serviceDetailRepository) Delete(id int) error {
@@ -51,7 +59,7 @@ func (s *serviceDetailRepository) RetrieveAll(page int, itemPerPage int) ([]mode
 	return customersServices, nil
 }
 
-func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int) ([]model.Account, error) {
+func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int) ([]dto.AccountCreateDto, error) {
 	var homepageServices []model.Account
 	offset := itemPerPage * (page - 1)
 	res := s.db.Order("created_at").Limit(itemPerPage).Offset(offset).Preload("AccountDetail").Preload("AccountDetail.PhotoProfiles").Preload("ServiceDetail").Preload("ServiceDetail.VideoProfiles").Preload("ServiceDetail.ServicePrices").Find(&homepageServices)
@@ -62,12 +70,39 @@ func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int)
 			return nil, err
 		}
 	}
-	for _, hp := range homepageServices {
+
+	containerClient, err := s.azr.NewContainerClient("photoprofile")
+	if err != nil {
+		log.Fatalln("Error getting container client")
+	}
+	var homePageRetrieval []dto.AccountCreateDto
+	for index, hp := range homepageServices {
+		var tempHomePageRetrieval dto.AccountCreateDto
 		if hp.ServiceDetail.SellerId != 0 {
-			return homepageServices, nil
+			fmt.Println("Log loop : ", index)
+			blockBlobClient, err := containerClient.NewBlockBlobClient(hp.AccountDetail.PhotoProfiles[len(hp.AccountDetail.PhotoProfiles)-1].PhotoLink)
+			if err != nil {
+				fmt.Println(err)
+			}
+			blobDownloadResponse, err := blockBlobClient.Download(context.TODO(), nil)
+			if err != nil {
+				fmt.Println(err)
+			}
+			reader := blobDownloadResponse.Body(nil)
+			downloadData, err := io.ReadAll(reader)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				dataUrl := base64.StdEncoding.EncodeToString(downloadData)
+				tempHomePageRetrieval.DataUrl = dataUrl
+				tempHomePageRetrieval.Account = homepageServices[index]
+				homePageRetrieval = append(homePageRetrieval, tempHomePageRetrieval)
+				reader.Close()
+			}
+			tempHomePageRetrieval.StringJoinDate = homepageServices[index].JoinDate.Format("2006-January-02")
 		}
 	}
-	return nil, nil
+	return homePageRetrieval, nil
 }
 
 func (s *serviceDetailRepository) FindById(id int) (model.ServiceDetail, error) {
@@ -101,8 +136,9 @@ func (s *serviceDetailRepository) Insert(customersService *model.ServiceDetail) 
 	return result.Error
 }
 
-func NewServiceDetailRepository(db *gorm.DB) ServiceDetailRepository {
+func NewServiceDetailRepository(db *gorm.DB, azr *azblob.ServiceClient) ServiceDetailRepository {
 	repo := new(serviceDetailRepository)
 	repo.db = db
+	repo.azr = azr
 	return repo
 }

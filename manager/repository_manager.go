@@ -18,6 +18,9 @@ type RepositoryManager interface {
 	SignUpAccountRepo() repository.SignUpRepository
 	EditAccountRepo() repository.EditAccountRepository
 	EditServiceRepo() repository.EditServiceRepository
+	AddOrderRepo() repository.AddOrderRepository
+	AddOrderStatusRepo() repository.AddOrderStatusRepository
+	AddServiceRepo() repository.AddServiceRepository
 	PasswordRepo() repository.PasswordRepository
 }
 
@@ -25,8 +28,20 @@ type repositoryManager struct {
 	infra Infra
 }
 
+func (r *repositoryManager) AddServiceRepo() repository.AddServiceRepository {
+	return repository.NewAddServiceRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) AddOrderStatusRepo() repository.AddOrderStatusRepository {
+	return repository.NewAddOrderStatusRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) AddOrderRepo() repository.AddOrderRepository {
+	return repository.NewAddOrderRepository(r.infra.SqlDb())
+}
+
 func (r *repositoryManager) AccountRepo() repository.AccountRepository {
-	return repository.NewAccountRepository(r.infra.SqlDb())
+	return repository.NewAccountRepository(r.infra.SqlDb(), r.infra.AzrClient())
 }
 
 func (r *repositoryManager) AccountDetailRepo() repository.AccountDetailRepository {
@@ -38,7 +53,7 @@ func (r *repositoryManager) PhotoProfileRepo() repository.PhotoProfileRepository
 }
 
 func (r *repositoryManager) ServiceDetailRepo() repository.ServiceDetailRepository {
-	return repository.NewServiceDetailRepository(r.infra.SqlDb())
+	return repository.NewServiceDetailRepository(r.infra.SqlDb(), r.infra.AzrClient())
 }
 
 func (r *repositoryManager) ServicePriceRepo() repository.ServicePriceRepository {
@@ -54,7 +69,7 @@ func (r *repositoryManager) FeedbackRepo() repository.FeedbackRepository {
 }
 
 func (r *repositoryManager) OrderRepo() repository.OrderRepository {
-	return repository.NewOrderRepository(r.infra.SqlDb())
+	return repository.NewOrderRepository(r.infra.SqlDb(), r.infra.AzrClient())
 }
 
 func (r *repositoryManager) OrderRequestRepo() repository.OrderRequestRepository {
@@ -70,7 +85,7 @@ func (r *repositoryManager) RefundRepository() repository.RefundRepository {
 }
 
 func (r *repositoryManager) VideoResultRepo() repository.VideoResultRepository {
-	return repository.NewVideoResultRepository(r.infra.SqlDb())
+	return repository.NewVideoResultRepository(r.infra.SqlDb(), r.infra.AzrClient())
 }
 
 func (r *repositoryManager) SignUpAccountRepo() repository.SignUpRepository {
@@ -78,7 +93,7 @@ func (r *repositoryManager) SignUpAccountRepo() repository.SignUpRepository {
 }
 
 func (r *repositoryManager) EditAccountRepo() repository.EditAccountRepository {
-	return repository.NewEditAccountRepository(r.infra.SqlDb())
+	return repository.NewEditAccountRepository(r.infra.SqlDb(), r.infra.AzrClient())
 }
 
 func (r *repositoryManager) EditServiceRepo() repository.EditServiceRepository {
