@@ -9,6 +9,7 @@ import (
 	"strings"
 	"surpreedz-backend/model"
 	"surpreedz-backend/model/dto"
+	"surpreedz-backend/utils"
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
@@ -132,15 +133,16 @@ func (e *editAccountRepository) EditPassword(EditPasswordDto *dto.EditPasswordDt
 			return err
 		}
 	}
-
 	//update password
+	passHash, _ := utils.HashPassword(EditPasswordDto.Password)
+
 	passwordExist := model.Password{
 		ID: password.ID,
 	}
 
 	if err := tx.Model(&passwordExist).Updates(map[string]interface{}{
 		// "email":    accountEditInfo.Email,
-		"password": EditPasswordDto.Password,
+		"password": passHash,
 	}).Error; err != nil {
 		return err
 	}
