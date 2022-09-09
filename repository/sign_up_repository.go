@@ -97,7 +97,7 @@ func (s *signUpRepository) SignUpAccount(accountFormInfo *dto.AccountFormInfo) e
 	//create photo_profile
 	newPhotoProfile := &model.PhotoProfile{
 		AccountDetailId: accountDetail.ID,
-		PhotoLink:       accountFormInfo.PhotoLink,
+		PhotoLink:       "default-photo.jpg",
 		IsDeleted:       accountFormInfo.IsDeleted,
 	}
 
