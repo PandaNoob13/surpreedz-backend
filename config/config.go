@@ -64,7 +64,7 @@ func (c *Config) readConfig() {
 		ApplicationName:     "SURPREEDZ",
 		JwtSingingMethod:    jwt.SigningMethodHS256,
 		JwtSignatureKey:     "5URPR33DZ",
-		AccessTokenLifeTIme: 600 * time.Second,
+		AccessTokenLifeTIme: 6000 * time.Second,
 		Client: redis.NewClient(&redis.Options{
 			Addr:     "localhost:6379",
 			Password: "",
