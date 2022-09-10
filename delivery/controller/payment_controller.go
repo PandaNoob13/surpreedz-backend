@@ -25,7 +25,7 @@ func (p *PaymentController) doPayment(ctx *gin.Context) {
 
 	// 1. Initiate Snap client
 	var s snap.Client
-	s.New("SB-Mid-server-gsCZ9MtDGDWMg255gPcbFtrS", midtrans.Sandbox)
+	s.New("Mid-server-c8LkxQRU7RvCQDyq4kWEBCj3", midtrans.Sandbox)
 	// Use to midtrans.Production if you want Production Environment (accept real transaction).
 
 	// 2. Initiate Snap request param
@@ -38,9 +38,9 @@ func (p *PaymentController) doPayment(ctx *gin.Context) {
 			Secure: true,
 		},
 		CustomerDetail: &midtrans.CustomerDetails{
-			FName: "John",
-			LName: "Doe",
-			Email: "john@doe.com",
+			FName: "Samuel",
+			LName: "Maynard",
+			Email: "sam@may.com",
 			Phone: "081234567890",
 		},
 	}

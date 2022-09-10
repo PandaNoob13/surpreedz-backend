@@ -43,7 +43,7 @@ func (c *Config) readConfig() {
 	// dbPassword := os.Getenv("DB_PASSWORD")
 	// dbName := os.Getenv("DB_NAME")
 
-	api := "localhost:8080"
+	api := "localhost:3001"
 	dbHost := "localhost"
 	dbPort := "5432"
 	dbUser := "postgres"
