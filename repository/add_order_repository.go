@@ -34,10 +34,9 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 		tx.Rollback()
 		return err
 	}
-
 	tx.Commit()
 
-	tx = a.db.Begin()
+	// tx = a.db.Begin()
 	var order model.Order
 	result := a.db.Where("mst_order.buyer_id = ?", toOrder.BuyerId).Last(&order)
 	if err := result.Error; err != nil {
