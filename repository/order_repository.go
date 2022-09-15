@@ -32,7 +32,7 @@ type orderRepository struct {
 
 func (o *orderRepository) FindAllByBuyerId(buyerId int) ([]dto.AccountCreateDto, error) {
 	var orders []model.Order
-	orderResult := o.db.Where("mst_order.buyer_id = ?", buyerId).Preload("OrderRequest").Preload("OrderStatus").Preload("VideoResult").Find(&orders)
+	orderResult := o.db.Where("mst_order.buyer_id = ?", buyerId).Preload("OrderRequest").Preload("OrderStatus").Preload("VideoResult").Preload("PaymentStatuses").Find(&orders)
 	if err := orderResult.Error; err != nil {
 		return []dto.AccountCreateDto{}, err
 	}
@@ -151,7 +151,7 @@ func (o *orderRepository) Create(order *model.Order) error {
 
 func (o *orderRepository) FindById(id int) (model.Order, error) {
 	var order model.Order
-	result := o.db.Preload("OrderStatus.Refund").Preload("OrderRequest").Preload("Feedback").Preload("VideoResult").Where("mst_order.id = ?", id).First(&order)
+	result := o.db.Preload("OrderStatus.Refund").Preload("OrderRequest").Preload("Feedback").Preload("VideoResult").Preload("PaymentStatuses").Where("mst_order.id = ?", id).First(&order)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return order, nil
@@ -165,7 +165,7 @@ func (o *orderRepository) FindById(id int) (model.Order, error) {
 func (o *orderRepository) FindAll(page int, itemPerPage int) ([]model.Order, error) {
 	var order []model.Order
 	offset := itemPerPage * (page - 1)
-	result := o.db.Unscoped().Order("created_at").Limit(itemPerPage).Offset(offset).Preload("OrderStatus.Refund").Preload("OrderRequest").Preload("Feedback").Preload("VideoResult").Find(&order)
+	result := o.db.Unscoped().Order("created_at").Limit(itemPerPage).Offset(offset).Preload("OrderStatus.Refund").Preload("OrderRequest").Preload("Feedback").Preload("VideoResult").Preload("PaymentStatuses").Find(&order)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return order, nil
