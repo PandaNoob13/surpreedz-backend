@@ -9,6 +9,7 @@ type Order struct {
 	OrderRequest    OrderRequest  `gorm:"foreignKey:OrderId;references:ID"`
 	Feedback        Feedback      `gorm:"foreignKey:OrderId;references:ID"`
 	VideoResult     VideoResult   `gorm:"foreignKey:OrderId;references:ID"`
+	PaymentStatuses PaymentStatus `gorm:"foreignKey:OrderId;references:ID"`
 	Base_model
 }
 

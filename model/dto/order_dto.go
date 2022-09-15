@@ -8,4 +8,5 @@ type OrderDto struct {
 	RecipientName        string `json:"recipient_name"`
 	Message              string `json:"message_to_recipient"`
 	RecipientDescription string `json:"recipient_description"`
+	StatusPayment        string `json:"payment_status"`
 }

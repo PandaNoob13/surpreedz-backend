@@ -34,9 +34,7 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 		tx.Rollback()
 		return err
 	}
-	tx.Commit()
 
-	// tx = a.db.Begin()
 	var order model.Order
 	result := a.db.Where("mst_order.buyer_id = ?", toOrder.BuyerId).Last(&order)
 	if err := result.Error; err != nil {
@@ -69,6 +67,16 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 	}
 
 	if err := tx.Create(toOrderStatus).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	toPaymentStatus := &model.PaymentStatus{
+		OrderId:       order.ID,
+		StatusPayment: newOrder.StatusPayment,
+	}
+
+	if err := tx.Create(toPaymentStatus).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
