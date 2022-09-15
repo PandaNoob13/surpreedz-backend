@@ -27,10 +27,16 @@ type UseCaseManager interface {
 	EditAccountInfoUsecase() usecase.EditAccountUsecase
 
 	FindPasswordByAccId() usecase.FindPasswordUseCase
+
+	AddPaymentStatus() usecase.AddPaymentStatusUseCase
 }
 
 type useCaseManager struct {
 	repoManager RepositoryManager
+}
+
+func (u *useCaseManager) AddPaymentStatus() usecase.AddPaymentStatusUseCase {
+	return usecase.NewAddPaymentStatusUseCase(u.repoManager.PaymentStatusRepo())
 }
 
 func (u *useCaseManager) AddOrderStatus() usecase.InsertOrderStatusUseCase {
