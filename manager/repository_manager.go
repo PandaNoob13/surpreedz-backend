@@ -22,15 +22,10 @@ type RepositoryManager interface {
 	AddOrderStatusRepo() repository.AddOrderStatusRepository
 	AddServiceRepo() repository.AddServiceRepository
 	PasswordRepo() repository.PasswordRepository
-	PaymentStatusRepo() repository.PaymentStatusRepository
 }
 
 type repositoryManager struct {
 	infra Infra
-}
-
-func (r *repositoryManager) PaymentStatusRepo() repository.PaymentStatusRepository {
-	return repository.NewPaymentRepository(r.infra.SqlDb())
 }
 
 func (r *repositoryManager) AddServiceRepo() repository.AddServiceRepository {
