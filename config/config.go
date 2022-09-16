@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -42,19 +43,12 @@ type Config struct {
 }
 
 func (c *Config) readConfig() {
-	// api := os.Getenv("API_URL")
-	// dbHost := os.Getenv("DB_HOST")
-	// dbPort := os.Getenv("DB_PORT")
-	// dbUser := os.Getenv("DB_USER")
-	// dbPassword := os.Getenv("DB_PASSWORD")
-	// dbName := os.Getenv("DB_NAME")
-
-	api := "localhost:8080"
-	dbHost := "localhost"
-	dbPort := "5432"
-	dbUser := "postgres"
-	dbPassword := "12345"
-	dbName := "final_project"
+	api := os.Getenv("API_URL")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", dbHost, dbUser, dbPassword, dbName, dbPort)
 	c.ApiConfig = ApiConfig{Url: api}
@@ -73,7 +67,7 @@ func (c *Config) readConfig() {
 	}
 	c.AzureConfig = AzureConfig{
 		AccountName: "surpreedzstorage",
-		AccountKey:  "HyW6McOCrbRuUsUGHGfmO779E9cJCIc1pqAOEAA6KQ2zZVX12ZiBiQKpCF3+Y65ZT03ORahhLWZH+ASt5cHWaA==",
+		AccountKey:  os.Getenv("AZURE_KEY"),
 		ServiceUrl:  "https://surpreedzstorage.blob.core.windows.net/",
 	}
 }
