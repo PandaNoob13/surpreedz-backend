@@ -53,8 +53,8 @@ func (c *Config) readConfig() {
 	dbHost := "localhost"
 	dbPort := "5432"
 	dbUser := "postgres"
-	dbPassword := "ah0k1234!$$!"
-	dbName := "coba_projek_smm"
+	dbPassword := ""
+	dbName := ""
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", dbHost, dbUser, dbPassword, dbName, dbPort)
 	c.ApiConfig = ApiConfig{Url: api}
@@ -73,7 +73,7 @@ func (c *Config) readConfig() {
 	}
 	c.AzureConfig = AzureConfig{
 		AccountName: "surpreedzstorage",
-		AccountKey:  "HyW6McOCrbRuUsUGHGfmO779E9cJCIc1pqAOEAA6KQ2zZVX12ZiBiQKpCF3+Y65ZT03ORahhLWZH+ASt5cHWaA==",
+		AccountKey:  "mVRAySXmfDDTqMoVi12+6bNie/4xoxrkouZYsEGkadlzzYnGRVjLu+lzbvx6x/krZdgvFVB69+9u+AStBDi0Ow==",
 		ServiceUrl:  "https://surpreedzstorage.blob.core.windows.net/",
 	}
 }
