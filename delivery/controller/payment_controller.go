@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 	"surpreedz-backend/model/dto"
+	"surpreedz-backend/usecase"
 
 	"github.com/gin-gonic/gin"
 	"github.com/midtrans/midtrans-go"
@@ -10,7 +11,8 @@ import (
 )
 
 type PaymentController struct {
-	router *gin.Engine
+	router           *gin.Engine
+	ucFindAccByEmail usecase.FindAccountUseCase
 }
 
 func (p *PaymentController) doPayment(ctx *gin.Context) {
@@ -23,9 +25,18 @@ func (p *PaymentController) doPayment(ctx *gin.Context) {
 		return
 	}
 
+	AccRes, _, err := p.ucFindAccByEmail.FindAccountByEmail(input.Email)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"status":  "FAILED",
+			"message": err.Error(),
+		})
+		return
+	}
+
 	// 1. Initiate Snap client
 	var s snap.Client
-	s.New("SB-Mid-server-fJeyt5cQRljouTox5wUVOV6F", midtrans.Sandbox)
+	s.New("SB-Mid-server-gsCZ9MtDGDWMg255gPcbFtrS", midtrans.Sandbox)
 	// Use to midtrans.Production if you want Production Environment (accept real transaction).
 
 	// 2. Initiate Snap request param
@@ -38,10 +49,8 @@ func (p *PaymentController) doPayment(ctx *gin.Context) {
 			Secure: true,
 		},
 		CustomerDetail: &midtrans.CustomerDetails{
-			FName: "Samuel",
-			LName: "Maynard",
-			Email: "sam@may.com",
-			Phone: "081234567890",
+			FName: AccRes.AccountDetail.Name,
+			Email: AccRes.Email,
 		},
 	}
 
@@ -55,10 +64,11 @@ func (p *PaymentController) doPayment(ctx *gin.Context) {
 
 }
 
-func NewPaymentController(router *gin.Engine) *PaymentController {
+func NewPaymentController(router *gin.Engine, ucFindAccByEmail usecase.FindAccountUseCase) *PaymentController {
 
 	controller := PaymentController{
-		router: router,
+		router:           router,
+		ucFindAccByEmail: ucFindAccByEmail,
 	}
 
 	rPayment := router.Group("/order")
