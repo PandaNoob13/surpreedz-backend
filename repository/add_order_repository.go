@@ -36,7 +36,7 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 	}
 
 	var order model.Order
-	result := a.db.Where("mst_order.buyer_id = ?", toOrder.BuyerId).Last(&order)
+	result := tx.Where("mst_order.buyer_id = ?", toOrder.BuyerId).Last(&order)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			tx.Rollback()
