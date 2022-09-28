@@ -28,6 +28,12 @@ func (b *BaseApi) ParseRequestFormData(c *gin.Context, requestModel interface{},
 }
 
 func (b *BaseApi) Success(c *gin.Context, data interface{}) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	if c.Request.Method == "OPTIONS" {
+		c.Header("Access-Control-Allow-Headers", "Authorization") // You can add more headers here if needed
+	} else {
+		// Your code goes here
+	}
 	response.NewSuccessJsonResponse(c, data).Send()
 }
 
