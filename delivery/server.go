@@ -21,6 +21,11 @@ type appServer struct {
 
 func Server() *appServer {
 	r := gin.Default()
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = []string{"https://surpreedz.koreacentral.cloudapp.azure.com"}
+	corsConfig.AllowMethods = []string{"PUT", "PATCH", "GET", "POST"}
+	corsConfig.AllowHeaders = []string{"Origin"}
+	r.Use(cors.New(corsConfig))
 	// r.Use(cors.New(cors.Config{
 	// 	AllowOrigins:     []string{"https://surpreedz.koreacentral.cloudapp.azure.com"},
 	// 	AllowMethods:     []string{"PUT", "PATCH", "GET", "POST"},
@@ -32,7 +37,7 @@ func Server() *appServer {
 	// 	},
 	// 	MaxAge: 12 * time.Hour,
 	// }))
-	r.Use(cors.Default())
+
 	appConfig := config.NewConfig()
 	infra := manager.NewInfra(appConfig)
 	managerRepo := manager.NewRepositoryManager(infra)

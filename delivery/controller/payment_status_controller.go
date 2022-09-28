@@ -3,6 +3,7 @@ package controller
 import (
 	"surpreedz-backend/delivery/api"
 	"surpreedz-backend/model"
+	"surpreedz-backend/model/dto"
 	"surpreedz-backend/usecase"
 	"surpreedz-backend/utils"
 
@@ -16,13 +17,18 @@ type PaymentStatusController struct {
 }
 
 func (ps *PaymentStatusController) AddPaymentStatus(c *gin.Context) {
-	var addPaymentStatus model.PaymentStatus
+	var addPaymentStatus dto.PaymentStatusDto
 	err := ps.ParseRequestBody(c, &addPaymentStatus)
 	if err != nil {
 		ps.Failed(c, utils.RequiredError())
 		return
 	}
-	err = ps.insPayStatUc.AddPaymentStatus(&addPaymentStatus)
+	paymentStatus := model.PaymentStatus{
+		OrderId:       addPaymentStatus.OrderId,
+		PaymentType:   addPaymentStatus.PaymentType,
+		StatusPayment: addPaymentStatus.StatusPayment,
+	}
+	err = ps.insPayStatUc.AddPaymentStatus(&paymentStatus)
 	if err != nil {
 		ps.Failed(c, err)
 		return
