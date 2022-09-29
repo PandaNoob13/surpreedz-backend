@@ -26,7 +26,9 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 		}
 	}()
 
+	//create order
 	toOrder := &model.Order{
+		ID:              uuid.New().String(),
 		BuyerId:         newOrder.BuyerId,
 		ServiceDetailId: newOrder.ServiceDetailId,
 		DueDate:         newOrder.DueDate,
@@ -36,6 +38,7 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 		return err
 	}
 
+	//find order by buyer id
 	var order model.Order
 	result := tx.Where("mst_order.buyer_id = ?", toOrder.BuyerId).Last(&order)
 	if err := result.Error; err != nil {
@@ -48,8 +51,9 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 		}
 	}
 
+	//create order req
 	toOrderRequest := &model.OrderRequest{
-		OrderId:       uuid.New().String(),
+		OrderId:       toOrder.ID,
 		Occasion:      newOrder.Occasion,
 		RecipientName: newOrder.RecipientName,
 		Message:       newOrder.Message,
@@ -61,6 +65,7 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 		return err
 	}
 
+	//create order status
 	toOrderStatus := &model.OrderStatus{
 		OrderId: order.ID,
 		Status:  "Waiting for confirmation", // On Progress, Accept or Reject dari seller (case sensitive)
@@ -72,6 +77,7 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 		return err
 	}
 
+	//create payment status
 	toPaymentStatus := &model.PaymentStatus{
 		OrderId: order.ID,
 		//StatusPayment: newOrder.StatusPayment,
