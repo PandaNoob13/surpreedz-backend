@@ -3,6 +3,7 @@ package repository
 import (
 	"surpreedz-backend/model"
 	"surpreedz-backend/model/dto"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -26,6 +27,7 @@ func (os *addOrderStatusRepository) AddOrderStatus(newOrderStatus *dto.OrderStat
 	toOrderStatus := &model.OrderStatus{
 		OrderId: newOrderStatus.OrderId,
 		Status:  newOrderStatus.Status,
+		Date:    time.Now(),
 	}
 	if err := tx.Create(toOrderStatus).Error; err != nil {
 		tx.Rollback()
