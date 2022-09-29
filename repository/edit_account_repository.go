@@ -20,6 +20,7 @@ import (
 type EditAccountRepository interface {
 	EditProfile(editProfileDto *dto.EditProfileDto) error
 	EditPassword(EditPasswordDto *dto.EditPasswordDto) error
+	EditVerifiedStatus(VerifyFromCMSDto *dto.VerifyFromCMS) error
 }
 
 type editAccountRepository struct {
@@ -147,6 +148,30 @@ func (e *editAccountRepository) EditPassword(EditPasswordDto *dto.EditPasswordDt
 		return err
 	}
 	return tx.Commit().Error
+}
+
+func (e *editAccountRepository) EditVerifiedStatus(VerifyFromCMSDto *dto.VerifyFromCMS) error {
+	var accountDetail model.AccountDetail
+	result := e.db.Where("mst_account_detail.account_id = ?", VerifyFromCMSDto.AccountId).First(&accountDetail)
+	if err := result.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		} else {
+			return err
+		}
+	}
+
+	accountDetailExist := model.AccountDetail{
+		ID: accountDetail.ID,
+	}
+
+	if err := e.db.Model(&accountDetailExist).Updates(map[string]interface{}{
+		"verified_status": VerifyFromCMSDto.VerifiedStatus,
+	}).Error; err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return nil
 }
 
 func NewEditAccountRepository(db *gorm.DB, azr *azblob.ServiceClient) EditAccountRepository {

@@ -6,6 +6,7 @@ import (
 	"surpreedz-backend/model/dto"
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -48,7 +49,7 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 	}
 
 	toOrderRequest := &model.OrderRequest{
-		OrderId:       order.ID,
+		OrderId:       uuid.New().String(),
 		Occasion:      newOrder.Occasion,
 		RecipientName: newOrder.RecipientName,
 		Message:       newOrder.Message,
@@ -62,7 +63,7 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 
 	toOrderStatus := &model.OrderStatus{
 		OrderId: order.ID,
-		Status:  "Waiting for confirmation",
+		Status:  "Waiting for confirmation", // On Progress, Accept or Reject dari seller (case sensitive)
 		Date:    time.Now(),
 	}
 
@@ -72,8 +73,9 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 	}
 
 	toPaymentStatus := &model.PaymentStatus{
-		OrderId:       order.ID,
-		StatusPayment: newOrder.StatusPayment,
+		OrderId: order.ID,
+		//StatusPayment: newOrder.StatusPayment,
+		StatusPayment: "unpaid",
 	}
 
 	if err := tx.Create(toPaymentStatus).Error; err != nil {
