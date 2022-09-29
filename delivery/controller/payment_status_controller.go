@@ -5,6 +5,7 @@ import (
 	"surpreedz-backend/model"
 	"surpreedz-backend/usecase"
 	"surpreedz-backend/utils"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,6 +23,9 @@ func (ps *PaymentStatusController) AddPaymentStatus(c *gin.Context) {
 		ps.Failed(c, utils.RequiredError())
 		return
 	}
+
+	addPaymentStatus.TimeUpdated = time.Now()
+
 	err = ps.insPayStatUc.AddPaymentStatus(&addPaymentStatus)
 	if err != nil {
 		ps.Failed(c, err)

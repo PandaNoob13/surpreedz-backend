@@ -8,6 +8,7 @@ import (
 type EditAccountUsecase interface {
 	EditProfile(editProfileDto *dto.EditProfileDto) error
 	EditPassword(EditPasswordDto *dto.EditPasswordDto) error
+	EditVerifiedStatus(VerifyFromCMSDto *dto.VerifyFromCMS) error
 }
 
 type editAccountUsecase struct {
@@ -20,6 +21,10 @@ func (e *editAccountUsecase) EditProfile(editProfile *dto.EditProfileDto) error 
 
 func (e *editAccountUsecase) EditPassword(editPassword *dto.EditPasswordDto) error {
 	return e.editAccountRepo.EditPassword(editPassword)
+}
+
+func (e *editAccountUsecase) EditVerifiedStatus(VerifyFromCMSDto *dto.VerifyFromCMS) error {
+	return e.editAccountRepo.EditVerifiedStatus(VerifyFromCMSDto)
 }
 
 func NewEditAccountUsecase(editAccountRepo repository.EditAccountRepository) EditAccountUsecase {

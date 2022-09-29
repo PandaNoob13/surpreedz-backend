@@ -1,7 +1,7 @@
 package model
 
 type Order struct {
-	ID              int           `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	ID              string        `json:"id" gorm:"primaryKey"`
 	BuyerId         int           `json:"buyer_id" gorm:";not null"`
 	ServiceDetailId int           `json:"service_detail_id" gorm:";not null"`
 	DueDate         string        `json:"due_date" gorm:";not null"`
