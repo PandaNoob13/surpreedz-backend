@@ -24,28 +24,16 @@ func (s *ServiceController) InsertService(c *gin.Context) {
 	var addService dto.ServiceDto
 	err := s.ParseRequestBody(c, &addService)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "FAILED",
-			"message": err.Error(),
-		})
 		s.Failed(c, utils.RequiredError())
 		return
 	}
 	serviceDetailId, err := s.insServUc.AddService(&addService)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "FAILED",
-			"message": err.Error(),
-		})
 		s.Failed(c, err)
 		return
 	}
 	var serviceDetailIdDto dto.CreateServiceResponseDto
 	serviceDetailIdDto.Service_Detail_Id = serviceDetailId
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "SUCCESS",
-		"message": "Success inserting service",
-	})
 	s.Success(c, serviceDetailIdDto)
 }
 
