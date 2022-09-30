@@ -53,8 +53,7 @@ func (v *VideoResultController) RetriveAllVideoResult(c *gin.Context) {
 
 func (v *VideoResultController) FindVideoResultByOrderId(c *gin.Context) {
 	videoResultId := c.Query("orderId")
-	vidResId, _ := strconv.Atoi(videoResultId)
-	vr, err := v.fdVidResByIdUc.FindVideoResultByOrderId(vidResId)
+	vr, err := v.fdVidResByIdUc.FindVideoResultByOrderId(videoResultId)
 	if err != nil {
 		v.Failed(c, err)
 		return

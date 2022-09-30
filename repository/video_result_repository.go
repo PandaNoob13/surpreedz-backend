@@ -19,7 +19,7 @@ import (
 
 type VideoResultRepository interface {
 	Create(videoResult *model.VideoResult, dataUrlParam string) error
-	FindByOrderId(id int) (dto.VideoResultDto, error)
+	FindByOrderId(id string) (dto.VideoResultDto, error)
 	FindAll(page int, itemPerPage int) ([]model.VideoResult, error)
 	UpdateByID(videoResult *model.VideoResult, by map[string]interface{}) error
 	Delete(videoResult *model.VideoResult) error
@@ -83,7 +83,7 @@ func (v *videoResultRepository) Create(videoResult *model.VideoResult, dataUrlPa
 	return tx.Commit().Error
 }
 
-func (v *videoResultRepository) FindByOrderId(id int) (dto.VideoResultDto, error) {
+func (v *videoResultRepository) FindByOrderId(id string) (dto.VideoResultDto, error) {
 	var videoResult model.VideoResult
 	result := v.db.First(&videoResult, "order_id = ?", id)
 	if err := result.Error; err != nil {

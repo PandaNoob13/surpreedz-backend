@@ -6,14 +6,14 @@ import (
 )
 
 type FindVideoResultByOrderIdUseCase interface {
-	FindVideoResultByOrderId(id int) (dto.VideoResultDto, error)
+	FindVideoResultByOrderId(id string) (dto.VideoResultDto, error)
 }
 
 type findVideoResultByOrderIdUseCase struct {
 	videoResultRepo repository.VideoResultRepository
 }
 
-func (v *findVideoResultByOrderIdUseCase) FindVideoResultByOrderId(id int) (dto.VideoResultDto, error) {
+func (v *findVideoResultByOrderIdUseCase) FindVideoResultByOrderId(id string) (dto.VideoResultDto, error) {
 	return v.videoResultRepo.FindByOrderId(id)
 }
 
