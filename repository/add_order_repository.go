@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"errors"
 	"surpreedz-backend/model"
 	"surpreedz-backend/model/dto"
 	"time"
@@ -39,17 +38,17 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 	}
 
 	//find order by buyer id
-	var order model.Order
-	result := tx.Where("mst_order.buyer_id = ?", toOrder.BuyerId).Last(&order)
-	if err := result.Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			tx.Rollback()
-			return err
-		} else {
-			tx.Rollback()
-			return err
-		}
-	}
+	// var order model.Order
+	// result := tx.Where("mst_order.buyer_id = ?", toOrder.BuyerId).Last(&order)
+	// if err := result.Error; err != nil {
+	// 	if errors.Is(err, gorm.ErrRecordNotFound) {
+	// 		tx.Rollback()
+	// 		return err
+	// 	} else {
+	// 		tx.Rollback()
+	// 		return err
+	// 	}
+	// }
 
 	//create order req
 	toOrderRequest := &model.OrderRequest{
@@ -67,7 +66,7 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 
 	//create order status
 	toOrderStatus := &model.OrderStatus{
-		OrderId: order.ID,
+		OrderId: toOrder.ID,
 		Status:  "Waiting for confirmation", // On Progress, Accept or Reject dari seller (case sensitive)
 		Date:    time.Now(),
 	}
@@ -79,7 +78,7 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 
 	//create payment status
 	toPaymentStatus := &model.PaymentStatus{
-		OrderId:       order.ID,
+		OrderId:       toOrder.ID,
 		StatusPayment: "unpaid",
 		PaymentType:   "-",
 	}
