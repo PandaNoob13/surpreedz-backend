@@ -7,6 +7,7 @@ import (
 	"surpreedz-backend/model/dto"
 	"surpreedz-backend/usecase"
 	"surpreedz-backend/utils"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,12 +31,13 @@ func (ps *PaymentStatusController) AddPaymentStatus(c *gin.Context) {
 		PaymentType:   addPaymentStatus.PaymentType,
 		StatusPayment: addPaymentStatus.StatusPayment,
 	}
+	paymentStatus.TimeUpdated = time.Now()
 	err = ps.insPayStatUc.AddPaymentStatus(&paymentStatus)
 	if err != nil {
 		ps.Failed(c, err)
 		return
 	}
-	ps.Success(c, addPaymentStatus)
+	ps.Success(c, paymentStatus)
 }
 
 func NewPaymentStatusController(router *gin.Engine, insPayStatUc usecase.AddPaymentStatusUseCase) *PaymentStatusController {

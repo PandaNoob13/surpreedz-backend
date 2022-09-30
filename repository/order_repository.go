@@ -97,7 +97,9 @@ func (o *orderRepository) FindAllByBuyerId(buyerId int) ([]dto.AccountCreateDto,
 
 func (o *orderRepository) FindAllByServiceDetailId(serviceDetailId int) ([]model.Account, error) {
 	var account []model.Account
-	result := o.db.Joins("inner join mst_order on mst_account.id = mst_order.buyer_id ").Joins("inner join mst_payment_status on mst_order.id = mst_payment_status.order_id ")
+	//result := o.db.Joins("inner join mst_order on mst_account.id = mst_order.buyer_id ").Joins("inner join mst_payment_status on mst_order.id = mst_payment_status.order_id ")
+	//result = result.Where("mst_order.service_detail_id = ?", serviceDetailId).Where("mst_payment_status.status_payment = ?", "paid").Distinct("mst_account.id").Preload("AccountDetail").Preload("AccountDetail.PhotoProfiles").Preload("Orders").Preload("Orders.OrderRequest").Preload("Orders.OrderStatus").Preload("Orders.PaymentStatuses").Preload("ServiceDetail").Preload("ServiceDetail.ServicePrices").Find(&account)
+	result := o.db.Joins("inner join mst_order on mst_account.id = mst_order.buyer_id ")
 	result = result.Where("mst_order.service_detail_id = ?", serviceDetailId).Distinct("mst_account.id").Preload("AccountDetail").Preload("AccountDetail.PhotoProfiles").Preload("Orders").Preload("Orders.OrderRequest").Preload("Orders.OrderStatus").Preload("Orders.PaymentStatuses").Preload("ServiceDetail").Preload("ServiceDetail.ServicePrices").Find(&account)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -109,7 +111,7 @@ func (o *orderRepository) FindAllByServiceDetailId(serviceDetailId int) ([]model
 	for accountIndex, accountValue := range account {
 		var rightOrders []model.Order
 		for _, orderValue := range accountValue.Orders {
-			if orderValue.ServiceDetailId == serviceDetailId {
+			if orderValue.ServiceDetailId == serviceDetailId && orderValue.PaymentStatuses.StatusPayment == "paid" {
 				rightOrders = append(rightOrders, orderValue)
 			}
 		}

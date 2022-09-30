@@ -86,6 +86,32 @@ func (e *EditAccountController) EditAccountProfile(ctx *gin.Context) {
 	})
 }
 
+func (e *EditAccountController) EditVerifiedStatus(ctx *gin.Context) {
+	var input dto.VerifyFromCMS
+	if err := ctx.BindJSON(&input); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "can't bind struct",
+		})
+		return
+	} else {
+		fmt.Println(input)
+	}
+
+	err := e.ucEditAcc.EditVerifiedStatus(&input)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"status":  "FAILED",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"status": "SUCCESS",
+	})
+
+}
+
 func NewEditAccountController(router *gin.Engine, tokenService utils.Token, ucEditAcc usecase.EditAccountUsecase, ucFindPassByAccid usecase.FindPasswordUseCase) *EditAccountController {
 
 	controller := EditAccountController{
@@ -99,6 +125,7 @@ func NewEditAccountController(router *gin.Engine, tokenService utils.Token, ucEd
 	{
 		rEditAcc.PUT("/edit-password", controller.EditAccountPassword)
 		rEditAcc.PUT("/edit-profile", controller.EditAccountProfile)
+		rEditAcc.PUT("/edit-verified", controller.EditVerifiedStatus)
 	}
 	return &controller
 

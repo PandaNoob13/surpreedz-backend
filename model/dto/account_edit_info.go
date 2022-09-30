@@ -35,3 +35,17 @@ type AccountCreateDto struct {
 
 	model.Base_model
 }
+
+type PhotoVerifyForCMS struct {
+	Email     string `json:"email"`
+	PhotoLink string `json:"photo_link"`
+}
+
+type VerifyFromCMS struct {
+	AccountId      int  `json:"account_id"`
+	VerifiedStatus bool `json:"verified_status"`
+}
+
+type EmailInput struct {
+	Email string `json:"email"`
+}
