@@ -32,7 +32,7 @@ type orderRepository struct {
 
 func (o *orderRepository) FindAllByBuyerId(buyerId int) ([]dto.AccountCreateDto, error) {
 	var orders []model.Order
-	orderResult := o.db.Joins("join mst_payment_status on mst_payment_status.order_id = mst_order.id").Joins("join mst_order_status on mst_order_status.order_id = mst_order.id").Where("mst_order.buyer_id = ?", buyerId).Preload("OrderRequest").Preload("OrderStatus").Preload("VideoResult").Preload("PaymentStatuses").Find(&orders)
+	orderResult := o.db.Where("mst_order.buyer_id = ?", buyerId).Preload("OrderRequest").Preload("OrderStatus").Preload("VideoResult").Preload("PaymentStatuses").Find(&orders)
 	if err := orderResult.Error; err != nil {
 		return []dto.AccountCreateDto{}, err
 	}
