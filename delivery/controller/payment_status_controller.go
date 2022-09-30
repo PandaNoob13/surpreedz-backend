@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"strconv"
 	"surpreedz-backend/delivery/api"
 	"surpreedz-backend/model"
 	"surpreedz-backend/model/dto"
@@ -25,9 +24,8 @@ func (ps *PaymentStatusController) AddPaymentStatus(c *gin.Context) {
 		ps.Failed(c, utils.RequiredError())
 		return
 	}
-	stringInt, _ := strconv.Atoi(addPaymentStatus.OrderId)
 	paymentStatus := model.PaymentStatus{
-		OrderId:       stringInt,
+		OrderId:       addPaymentStatus.OrderId,
 		PaymentType:   addPaymentStatus.PaymentType,
 		StatusPayment: addPaymentStatus.StatusPayment,
 	}
