@@ -100,7 +100,7 @@ func (o *orderRepository) FindAllByServiceDetailId(serviceDetailId int) ([]model
 	result := o.db.Joins("inner join mst_order on mst_account.id = mst_order.buyer_id ").Joins("inner join mst_payment_status on mst_order.id = mst_payment_status.order_id ")
 	// result = result.Where("mst_order.service_detail_id = ?", serviceDetailId).Where("mst_payment_status.status_payment = ?", "paid").Distinct("mst_account.id").Preload("AccountDetail").Preload("AccountDetail.PhotoProfiles").Preload("Orders").Preload("Orders.OrderRequest").Preload("Orders.OrderStatus").Preload("Orders.PaymentStatuses").Preload("ServiceDetail").Preload("ServiceDetail.ServicePrices").Find(&account)
 	// result := o.db.Joins("inner join mst_order on mst_account.id = mst_order.buyer_id ")
-	result = result.Where("mst_order.service_detail_id = ?", serviceDetailId).Where("mst_payment_status.status_payment = settlement").Distinct("mst_account.id").Preload("AccountDetail").Preload("AccountDetail.PhotoProfiles").Preload("Orders").Preload("Orders.OrderRequest").Preload("Orders.OrderStatus").Preload("Orders.PaymentStatuses").Preload("ServiceDetail").Preload("ServiceDetail.ServicePrices").Find(&account)
+	result = result.Where("mst_order.service_detail_id = ?", serviceDetailId).Distinct("mst_account.id").Preload("AccountDetail").Preload("AccountDetail.PhotoProfiles").Preload("Orders").Preload("Orders.OrderRequest").Preload("Orders.OrderStatus").Preload("Orders.PaymentStatuses").Preload("ServiceDetail").Preload("ServiceDetail.ServicePrices").Find(&account)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return []model.Account{}, nil
