@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"os"
 	"surpreedz-backend/model/dto"
 	"surpreedz-backend/usecase"
 
@@ -36,7 +37,8 @@ func (p *PaymentController) doPayment(ctx *gin.Context) {
 
 	// 1. Initiate Snap client
 	var s snap.Client
-	s.New("SB-Mid-server-gsCZ9MtDGDWMg255gPcbFtrS", midtrans.Sandbox)
+	midtransServerKey := os.Getenv("MIDTRANS_SERVER_KEY")
+	s.New(midtransServerKey, midtrans.Sandbox)
 	// Use to midtrans.Production if you want Production Environment (accept real transaction).
 
 	// 2. Initiate Snap request param

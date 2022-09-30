@@ -79,9 +79,11 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 
 	//create payment status
 	toPaymentStatus := &model.PaymentStatus{
+		OrderId:       order.ID,
+		StatusPayment: "Pending",
 		OrderId: order.ID,
-		//StatusPayment: newOrder.StatusPayment,
 		StatusPayment: "unpaid",
+    PaymentType:   "-",
 	}
 
 	if err := tx.Create(toPaymentStatus).Error; err != nil {

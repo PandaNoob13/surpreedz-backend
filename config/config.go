@@ -50,13 +50,6 @@ func (c *Config) readConfig() {
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
 
-	// api := ""
-	// dbHost := ""
-	// dbPort := ""
-	// dbUser := ""
-	// dbPassword := ""
-	// dbName := ""
-
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", dbHost, dbUser, dbPassword, dbName, dbPort)
 	c.ApiConfig = ApiConfig{Url: api}
 	c.DbConfig = DbConfig{DataSourceName: dsn}
@@ -73,7 +66,7 @@ func (c *Config) readConfig() {
 		}),
 	}
 	c.AzureConfig = AzureConfig{
-		AccountName: "surpreedzstorage", //os.Getenv("AZURE_KEY")
+		AccountName: "surpreedzstorage",
 		AccountKey:  os.Getenv("AZURE_KEY"),
 		ServiceUrl:  "https://surpreedzstorage.blob.core.windows.net/",
 	}
