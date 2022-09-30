@@ -6,14 +6,14 @@ import (
 )
 
 type InsertOrderUseCase interface {
-	AddOrder(newOrder dto.OrderDto) error
+	AddOrder(newOrder dto.OrderDto) (string, error)
 }
 
 type insertOrderUseCase struct {
 	addOrderRepo repository.AddOrderRepository
 }
 
-func (o *insertOrderUseCase) AddOrder(newOrder dto.OrderDto) error {
+func (o *insertOrderUseCase) AddOrder(newOrder dto.OrderDto) (string, error) {
 	return o.addOrderRepo.AddOrder(&newOrder)
 }
 

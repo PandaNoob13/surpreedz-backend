@@ -27,12 +27,14 @@ func (o *OrderController) InsertOrder(c *gin.Context) {
 		o.Failed(c, utils.RequiredError())
 		return
 	}
-	err = o.insOrdUc.AddOrder(addOrder)
+	order_id, err := o.insOrdUc.AddOrder(addOrder)
 	if err != nil {
 		o.Failed(c, err)
 		return
 	}
-	o.Success(c, addOrder)
+	var response dto.CreateOrderResponseDto
+	response.Order_id = order_id
+	o.Success(c, response)
 }
 
 func (o *OrderController) RetrieveAllOrder(c *gin.Context) {

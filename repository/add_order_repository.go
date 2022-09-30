@@ -10,14 +10,14 @@ import (
 )
 
 type AddOrderRepository interface {
-	AddOrder(newOrder *dto.OrderDto) error
+	AddOrder(newOrder *dto.OrderDto) (string, error)
 }
 
 type addOrderRepository struct {
 	db *gorm.DB
 }
 
-func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
+func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) (string, error) {
 	tx := a.db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -34,7 +34,7 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 	}
 	if err := tx.Create(toOrder).Error; err != nil {
 		tx.Rollback()
-		return err
+		return toOrder.ID, err
 	}
 
 	//find order by buyer id
@@ -61,7 +61,7 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 
 	if err := tx.Create(toOrderRequest).Error; err != nil {
 		tx.Rollback()
-		return err
+		return toOrder.ID, err
 	}
 
 	//create order status
@@ -73,7 +73,7 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 
 	if err := tx.Create(toOrderStatus).Error; err != nil {
 		tx.Rollback()
-		return err
+		return toOrder.ID, err
 	}
 
 	//create payment status
@@ -85,10 +85,10 @@ func (a *addOrderRepository) AddOrder(newOrder *dto.OrderDto) error {
 
 	if err := tx.Create(toPaymentStatus).Error; err != nil {
 		tx.Rollback()
-		return err
+		return toOrder.ID, err
 	}
 
-	return tx.Commit().Error
+	return toOrder.ID, tx.Commit().Error
 }
 
 func NewAddOrderRepository(db *gorm.DB) AddOrderRepository {
