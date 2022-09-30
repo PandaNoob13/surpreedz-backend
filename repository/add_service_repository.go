@@ -8,14 +8,14 @@ import (
 )
 
 type AddServiceRepository interface {
-	AddService(newService *dto.ServiceDto) error
+	AddService(newService *dto.ServiceDto) (int, error)
 }
 
 type addServiceRepository struct {
 	db *gorm.DB
 }
 
-func (a *addServiceRepository) AddService(newService *dto.ServiceDto) error {
+func (a *addServiceRepository) AddService(newService *dto.ServiceDto) (int, error) {
 	tx := a.db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -30,7 +30,7 @@ func (a *addServiceRepository) AddService(newService *dto.ServiceDto) error {
 	}
 	if err := tx.Create(toServiceDetail).Error; err != nil {
 		tx.Rollback()
-		return err
+		return 0, err
 	}
 
 	toServicePrice := &model.ServicePrice{
@@ -39,7 +39,7 @@ func (a *addServiceRepository) AddService(newService *dto.ServiceDto) error {
 	}
 	if err := tx.Create(toServicePrice).Error; err != nil {
 		tx.Rollback()
-		return err
+		return toServiceDetail.ID ,err
 	}
 
 	toVideoProfile := &model.VideoProfile{
@@ -48,9 +48,9 @@ func (a *addServiceRepository) AddService(newService *dto.ServiceDto) error {
 	}
 	if err := tx.Create(toVideoProfile).Error; err != nil {
 		tx.Rollback()
-		return err
+		return toServiceDetail.ID ,err
 	}
-	return tx.Commit().Error
+	return toServiceDetail.ID ,tx.Commit().Error
 }
 
 func NewAddServiceRepository(db *gorm.DB) AddServiceRepository {

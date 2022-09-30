@@ -31,7 +31,7 @@ func (s *ServiceController) InsertService(c *gin.Context) {
 		s.Failed(c, utils.RequiredError())
 		return
 	}
-	err = s.insServUc.AddService(&addService)
+	serviceDetailId, err := s.insServUc.AddService(&addService)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  "FAILED",
@@ -40,11 +40,13 @@ func (s *ServiceController) InsertService(c *gin.Context) {
 		s.Failed(c, err)
 		return
 	}
+	var serviceDetailIdDto dto.CreateServiceResponseDto
+	serviceDetailIdDto.Service_Detail_Id = serviceDetailId
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "SUCCESS",
 		"message": "Success inserting service",
 	})
-	s.Success(c, addService)
+	s.Success(c, serviceDetailIdDto)
 }
 
 func (s *ServiceController) RetrieveHomePage(c *gin.Context) {

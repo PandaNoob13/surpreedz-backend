@@ -6,14 +6,14 @@ import (
 )
 
 type InsertServiceUseCase interface {
-	AddService(newService *dto.ServiceDto) error
+	AddService(newService *dto.ServiceDto) (int, error)
 }
 
 type insertServiceUseCase struct {
 	addServiceRepo repository.AddServiceRepository
 }
 
-func (s *insertServiceUseCase) AddService(newService *dto.ServiceDto) error {
+func (s *insertServiceUseCase) AddService(newService *dto.ServiceDto) (int, error) {
 	return s.addServiceRepo.AddService(newService)
 }
 
