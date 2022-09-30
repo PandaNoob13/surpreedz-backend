@@ -108,6 +108,8 @@ func (o *orderRepository) FindAllByServiceDetailId(serviceDetailId int) ([]model
 			return []model.Account{}, err
 		}
 	}
+
+	var sentAccount []model.Account
 	for accountIndex, accountValue := range account {
 		var rightOrders []model.Order
 		for _, orderValue := range accountValue.Orders {
@@ -116,8 +118,11 @@ func (o *orderRepository) FindAllByServiceDetailId(serviceDetailId int) ([]model
 			}
 		}
 		account[accountIndex].Orders = rightOrders
+		if len(rightOrders) != 0 {
+			sentAccount = append(sentAccount, account[accountIndex])
+		}
 	}
-	return account, nil
+	return sentAccount, nil
 }
 
 // func (o *orderRepository) FindAllByServiceDetailId(serviceDetailId int) ([]model.Order, error) {
