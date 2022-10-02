@@ -5,9 +5,9 @@ import (
 )
 
 type Account struct {
-	ID            int           `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
-	Email         string        `json:"email" gorm:";not null"`
-	IsAdmin       bool          `json:"is_admin" gorm:";not nulll"`
+	ID    int    `json:"id" gorm:"primaryKey;AUTO_INCREMENT"`
+	Email string `json:"email" gorm:";not null"`
+	//IsAdmin       bool          `json:"is_admin" gorm:";not nulll"`
 	AccountDetail AccountDetail `gorm:"foreignKey:AccountId;references:ID"`
 	JoinDate      time.Time     `json:"join_date" gorm:";not null"`
 	Orders        []Order       `gorm:"foreignKey:BuyerId;references:ID"`
