@@ -65,7 +65,7 @@ func (a *appServer) initControllers() {
 	controller.NewEditAccountController(a.engine, a.tokenService, a.managerUsecase.EditAccountInfoUsecase(), a.managerUsecase.FindPasswordByAccId())
 	controller.NewPaymentController(a.engine, a.managerUsecase.FindAccountUseCase())
 	controller.NewPaymentStatusController(a.engine, a.managerUsecase.AddPaymentStatus())
-	controller.NewVerifyAccController(a.engine, a.managerUsecase.FindAccountUseCase())
+	controller.NewVerifyAccController(a.engine, /* a.managerUsecase.FindAccountUseCase(), */ a.managerUsecase.EditAccountInfoUsecase())
 }
 
 func (a *appServer) Run() {

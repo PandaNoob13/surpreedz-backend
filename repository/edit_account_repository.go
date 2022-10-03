@@ -166,7 +166,8 @@ func (e *editAccountRepository) EditVerifiedStatus(VerifyFromCMSDto *dto.VerifyF
 	}
 
 	if err := e.db.Model(&accountDetailExist).Updates(map[string]interface{}{
-		"verified_status": VerifyFromCMSDto.VerifiedStatus,
+		"verified_status":  VerifyFromCMSDto.VerifiedStatus,
+		"verified_request": VerifyFromCMSDto.VerifiedRequest,
 	}).Error; err != nil {
 		fmt.Println(err)
 		return err

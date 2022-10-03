@@ -42,10 +42,15 @@ type PhotoVerifyForCMS struct {
 }
 
 type VerifyFromCMS struct {
-	AccountId      int  `json:"account_id"`
-	VerifiedStatus bool `json:"verified_status"`
+	AccountId       int    `json:"account_id"`
+	VerifiedStatus  bool   `json:"verified_status"`
+	VerifiedRequest string `json:"verified_request"`
 }
 
 type EmailInput struct {
 	Email string `json:"email"`
+}
+
+type AccIdInput struct {
+	AccountId int `json:"account_id"`
 }
