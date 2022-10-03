@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"surpreedz-backend/model"
 	"surpreedz-backend/model/dto"
 
@@ -24,6 +25,36 @@ func (e *editServiceRepository) EditService(serviceId int, existService *dto.Edi
 	}()
 
 	if err := tx.Error; err != nil {
+		return err
+	}
+
+	var serviceDetail model.ServiceDetail
+	result := tx.Where("mst_service_detail.id = ?", serviceId).Last(&serviceDetail)
+	if err := result.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			tx.Rollback()
+			return err
+		} else {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	var accountDetail model.AccountDetail
+	result = tx.Where("mst_account_detail.account_id = ?", serviceDetail.SellerId).First(&accountDetail)
+	if err := result.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			tx.Rollback()
+			return err
+		} else {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	if err := tx.Model(&accountDetail).Updates(map[string]interface{}{
+		"verified_request": "waiting",
+	}).Error; err != nil {
 		return err
 	}
 

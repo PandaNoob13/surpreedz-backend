@@ -6,7 +6,6 @@ import (
 	"surpreedz-backend/delivery/api"
 	"surpreedz-backend/model/dto"
 	"surpreedz-backend/usecase"
-	"surpreedz-backend/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +23,7 @@ func (o *OrderController) InsertOrder(c *gin.Context) {
 	err := o.ParseRequestBody(c, &addOrder)
 	fmt.Println(addOrder)
 	if err != nil {
-		o.Failed(c, utils.RequiredError())
+		o.Failed(c, err)
 		return
 	}
 	order_id, err := o.insOrdUc.AddOrder(addOrder)
