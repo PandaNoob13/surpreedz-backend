@@ -39,7 +39,7 @@ func (c *cmsAccountRepository) GetAllAccount(table string, condition string) ([]
 		log.Fatalln("Error getting container client")
 	}
 
-	for i, _ := range customers {
+	for i := range customers {
 		var dataURLArr []string
 		blockBlobClient, err := containerClient.NewBlockBlobClient(customers[i].AccountDetail.PhotoProfiles[len(customers[i].AccountDetail.PhotoProfiles)-1].PhotoLink)
 		if err != nil {
