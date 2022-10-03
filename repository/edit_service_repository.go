@@ -40,24 +40,6 @@ func (e *editServiceRepository) EditService(serviceId int, existService *dto.Edi
 		}
 	}
 
-	var accountDetail model.AccountDetail
-	result = tx.Where("mst_account_detail.account_id = ?", serviceDetail.SellerId).First(&accountDetail)
-	if err := result.Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			tx.Rollback()
-			return err
-		} else {
-			tx.Rollback()
-			return err
-		}
-	}
-
-	if err := tx.Model(&accountDetail).Updates(map[string]interface{}{
-		"verified_request": "waiting",
-	}).Error; err != nil {
-		return err
-	}
-
 	toServiceDetail := model.ServiceDetail{
 		ID: serviceId,
 	}

@@ -63,7 +63,7 @@ func (s *serviceDetailRepository) HomePageRetrieveAll(page int, itemPerPage int)
 	var homepageServices []model.Account
 	offset := itemPerPage * (page - 1)
 	res := s.db.Joins("inner join mst_account_detail on mst_account.id = mst_account_detail.account_id")
-	res = res.Order("created_at").Limit(itemPerPage).Offset(offset).Preload("AccountDetail").Preload("AccountDetail.PhotoProfiles").Preload("ServiceDetail").Preload("ServiceDetail.VideoProfiles").Preload("ServiceDetail.ServicePrices").Where("mst_account_detail.verified_status = ?", true).Find(&homepageServices)
+	res = res.Order("created_at").Limit(itemPerPage).Offset(offset).Preload("AccountDetail").Preload("AccountDetail.PhotoProfiles").Preload("ServiceDetail").Preload("ServiceDetail.VideoProfiles").Preload("ServiceDetail.ServicePrices").Find(&homepageServices)
 	if err := res.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
