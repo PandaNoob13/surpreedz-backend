@@ -67,6 +67,7 @@ func (a *appServer) initControllers() {
 	controller.NewPaymentStatusController(a.engine, a.managerUsecase.AddPaymentStatus())
 	controller.NewVerifyAccController(a.engine, /* a.managerUsecase.FindAccountUseCase(), */ a.managerUsecase.EditAccountInfoUsecase())
 	controller.NewSendAccCMSController(a.engine, a.managerUsecase.GetCMSAccount())
+	controller.NewSendBuyerSellerAccCMSController(a.engine, a.managerUsecase.GetCMSBuyerSellerAccount())
 }
 
 func (a *appServer) Run() {
