@@ -32,6 +32,7 @@ type UseCaseManager interface {
 
 	GetCMSAccount() usecase.FindAccountCMSUseCase
 	GetCMSBuyerSellerAccount() usecase.FindBuyerSellerAccCMSUseCase
+	GetCMSOrder() usecase.FindOrderCMSUseCase
 }
 
 type useCaseManager struct {
@@ -120,6 +121,10 @@ func (u *useCaseManager) GetCMSAccount() usecase.FindAccountCMSUseCase {
 
 func (u *useCaseManager) GetCMSBuyerSellerAccount() usecase.FindBuyerSellerAccCMSUseCase {
 	return usecase.NewFindBuyerSellerAccCMSUseCase(u.repoManager.AccountBuyerSellerCMSRepo())
+}
+
+func (u *useCaseManager) GetCMSOrder() usecase.FindOrderCMSUseCase {
+	return usecase.NewFindOrderCMSUseCase(u.repoManager.OrderCMSRepo())
 }
 
 func NewUseCaseManager(repoManager RepositoryManager) UseCaseManager {
