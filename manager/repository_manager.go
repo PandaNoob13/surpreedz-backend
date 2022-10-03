@@ -23,6 +23,7 @@ type RepositoryManager interface {
 	AddServiceRepo() repository.AddServiceRepository
 	PasswordRepo() repository.PasswordRepository
 	PaymentStatusRepo() repository.PaymentStatusRepository
+	AccountCMSRepo() repository.CMSAccountRepository
 }
 
 type repositoryManager struct {
@@ -107,6 +108,10 @@ func (r *repositoryManager) EditServiceRepo() repository.EditServiceRepository {
 
 func (r *repositoryManager) PasswordRepo() repository.PasswordRepository {
 	return repository.NewPasswordRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) AccountCMSRepo() repository.CMSAccountRepository {
+	return repository.NewCMSAccountRepository(r.infra.SqlDb(), r.infra.AzrClient())
 }
 
 func NewRepositoryManager(infra Infra) RepositoryManager {
