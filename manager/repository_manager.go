@@ -26,6 +26,7 @@ type RepositoryManager interface {
 	AccountCMSRepo() repository.CMSAccountRepository
 	AccountBuyerSellerCMSRepo() repository.CMSAccSellerBuyerRepository
 	OrderCMSRepo() repository.CMSOrderRepository
+	AdminAccRepo() repository.AdminAccRepository
 }
 
 type repositoryManager struct {
@@ -122,6 +123,10 @@ func (r *repositoryManager) AccountBuyerSellerCMSRepo() repository.CMSAccSellerB
 
 func (r *repositoryManager) OrderCMSRepo() repository.CMSOrderRepository {
 	return repository.NewCMSOrderRepository(r.infra.SqlDb())
+}
+
+func (r *repositoryManager) AdminAccRepo() repository.AdminAccRepository {
+	return repository.NewAdminAccRepository(r.infra.SqlDb())
 }
 
 func NewRepositoryManager(infra Infra) RepositoryManager {

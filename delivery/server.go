@@ -65,10 +65,11 @@ func (a *appServer) initControllers() {
 	controller.NewEditAccountController(a.engine, a.tokenService, a.managerUsecase.EditAccountInfoUsecase(), a.managerUsecase.FindPasswordByAccId())
 	controller.NewPaymentController(a.engine, a.managerUsecase.FindAccountUseCase())
 	controller.NewPaymentStatusController(a.engine, a.managerUsecase.AddPaymentStatus())
-	controller.NewVerifyAccController(a.engine, /* a.managerUsecase.FindAccountUseCase(), */ a.managerUsecase.EditAccountInfoUsecase())
+	controller.NewVerifyAccController(a.engine /* a.managerUsecase.FindAccountUseCase(), */, a.managerUsecase.EditAccountInfoUsecase())
 	controller.NewSendAccCMSController(a.engine, a.managerUsecase.GetCMSAccount())
 	controller.NewSendBuyerSellerAccCMSController(a.engine, a.managerUsecase.GetCMSBuyerSellerAccount())
 	controller.NewSendOrderCMSController(a.engine, a.managerUsecase.GetCMSOrder())
+	controller.NewAdminLoginController(a.engine, a.tokenService, a.managerUsecase.FindAdminAcc())
 }
 
 func (a *appServer) Run() {

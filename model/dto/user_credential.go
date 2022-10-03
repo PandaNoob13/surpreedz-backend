@@ -3,5 +3,9 @@ package dto
 type Credential struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
-	//Email    string
+}
+
+type AdminCredential struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
